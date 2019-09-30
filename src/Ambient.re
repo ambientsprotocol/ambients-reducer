@@ -114,16 +114,14 @@ let toString (ambient: ambient): string = {
 };
 
 let canEnter (a, b) = {
-  let next = getNextAction
-  switch (next(a), next(b)) {
+  switch (getNextAction(a), getNextAction(b)) {
   | (In(c), In_(d)) => c == getName(b) && d == getName(a)
   | _ => false
   };
 };
 
 let canOpen (a, b) = {
-  let next = getNextAction
-  switch (next(a), next(b)) {
+  switch (getNextAction(a), getNextAction(b)) {
   | (Open(c), Open_) => c == getName(b)
   | _ => false
   };
@@ -132,21 +130,15 @@ let canOpen (a, b) = {
 /* TODO: canExit */
 
 let inheritChildren (b, a) = addChildren(getChildren(b), a);
-
-let inheritCapabilities (b, a) = {
-  List.concat([getCapabilities(a), getCapabilities(b)]) 
-  |> updateCapabilities(a);
-};
-
-let consumeCapabilities (a, b) = {
-  let source = updateCapabilities(a, List.tl(getCapabilities(a)));
-  let target = updateCapabilities(b, List.tl(getCapabilities(b)));
-  (source, target);
-};
+let inheritCapabilities (b, a) = List.concat([getCapabilities(a), getCapabilities(b)]) |> updateCapabilities(a);
+let consumeCapability (ambient) = updateCapabilities(ambient, List.tl(getCapabilities(ambient)));
+let consumeCapabilities (a, b) = (consumeCapability(a), consumeCapability(b));
 
 let enter (a, b, parent): ambient = {
   let (source, target) = consumeCapabilities(a, b);
+  /* Add the entering ambient to the target ambient */
   let updated = addChild(source, target);
+  /* Remove the entering ambient from its parent */
   parent |> removeChild(source) |> updateChild(updated);
 };
 
@@ -154,6 +146,9 @@ let enter (a, b, parent): ambient = {
 
 let open_ (a, b, parent): ambient = {
   let (source, target) = consumeCapabilities(a, b);
+  /* Remove the opening ambient from its parent (source),
+  inherit the children and capabilities of the opened ambient and
+  update the parent of the ambient that opened the target ambient */
   let updated = source 
     |> removeChild(target)
     |> inheritChildren(target)
@@ -230,6 +225,11 @@ let rec canReduce (ambient) = {
   };
 };
 
+/* Summary of the reduction logic:
+- Traverse the ambient structure (tree) and gather all possible reductions (transitions)
+- Check if there are any reductions that can be made, if not, the ambient is fully reduced
+- If there are reductions to make, recursively traverse the ambient structure (tree) and apply the reductions (transitions)
+*/
 let rec reduceFully (ambient) = {
   let transitionTree = createTransitionTreeRecursive(ambient);
   switch (canReduce(transitionTree)) {
