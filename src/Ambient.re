@@ -5,14 +5,15 @@ type option('a) =
   | Some('a)
   | None;
 
-type op('a) = {
+type action('a) = {
   source: 'a, 
   target: 'a, 
-  op: capability
+  action: capability
 };
 
+/* Ambient has a name, list of children (nested ambients), list of (unused) capabilities and a list of "transitions", ie. capabilities that can be reduced in the next reduction */
 type ambient =
-  | Ambient(name, list(ambient), list(capability), list(op(ambient)));
+  | Ambient(name, list(ambient), list(capability), list(action(ambient)));
 
 let empty (name): ambient = {
   Ambient(name, [], [], []);
@@ -160,17 +161,17 @@ let open_ (a, b, parent): ambient = {
   parent |> updateChild(updated);
 };
 
-let createTransition (ambient, parent): option(op(ambient)) = {
-  let transition (source, target, checkFn, op) = {
+let createTransition (ambient, parent): option(action(ambient)) = {
+  let transition (source, target, checkFn, action) = {
     switch (checkFn(source, target)) {
-    | true => Some({op, source, target})
+    | true => Some({action, source, target})
     | false => None
     };
   };
-  let processCapability (name, source, checkFn, op) = {
+  let processCapability (name, source, checkFn, action) = {
     switch (findChild(name, source)) {
     | exception Not_found => None
-    | target => transition(ambient, target, checkFn, op)
+    | target => transition(ambient, target, checkFn, action)
     };
   };
   switch (getNextAction(ambient)) {
@@ -193,9 +194,9 @@ let rec createTransitionTreeRecursive (ambient: ambient): ambient = {
   }, ambient, children);
 };
 
-let applyTransition (parent, transition: op(ambient)) = {
-  let {source, target, op} = transition;
-  switch op {
+let applyTransition (parent, transition: action(ambient)) = {
+  let {source, target, action} = transition;
+  switch action {
   | In(_) => enter(source, target, parent)
   | Open(_) => open_(source, target, parent)
   | _ => parent
@@ -206,7 +207,7 @@ let rec applyTransitionsRecursive (ambient): ambient = {
   let updated1 = List.fold_left((res, child: ambient) => {
     updateChild(applyTransitionsRecursive(child), res);
   }, ambient, getChildren(ambient));
-  let updated2 = List.fold_left((res, transition: op(ambient)) => {
+  let updated2 = List.fold_left((res, transition: action(ambient)) => {
     applyTransition(res, transition);
   }, updated1, getTransitions(ambient));
   Ambient(
