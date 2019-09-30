@@ -71,3 +71,17 @@ let create5 (): ambient = {
     ], [Out_("c")], []),
   ], [], []);
 };
+
+/* 
+Test: out/out_ 
+Final state: a[c[]|d[]]
+*/
+let create6 (): ambient = {
+  Ambient("a", [
+    Ambient("b", [
+      Ambient("c", [
+        Ambient("d", [], [Out("c")], [])
+      ], [Out("b"), Out_("d")], [])
+    ], [Out_("c"), Open_], []),
+  ], [Open("b")], []);
+};

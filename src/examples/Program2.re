@@ -1,6 +1,6 @@
 open Ambient;
 
-let ambient = TestAmbients.create5();
+let ambient = TestAmbients.create6();
 let root = Ambient("", [ambient], [], []);
 
 print_string("--------\n")
@@ -13,6 +13,8 @@ let o3 = toString(List.nth(getChildren(List.nth(getChildren(root), 0)), 0))
 print_string(o3);
 let o4 = toString(List.nth(getChildren(List.nth(getChildren(List.nth(getChildren(root), 0)), 0)), 0))
 print_string(o4);
+let o5 = toString(List.nth(getChildren(List.nth(getChildren(List.nth(getChildren(List.nth(getChildren(root), 0)), 0)), 0)), 0));
+print_string(o5);
 print_string("--------\n")
 
 let result = reduceFully(root);
