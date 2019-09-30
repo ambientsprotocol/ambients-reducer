@@ -1,15 +1,10 @@
 type name = Name.t;
 type capability = Capability.t;
+type transition('a) = Transition.t('a);
 
 type option('a) =
   | Some('a)
   | None;
-
-type transition('a) = {
-  source: 'a, 
-  target: 'a, 
-  transition: capability
-};
 
 /* Ambient has a name, list of children (nested ambients), list of (unused) capabilities and a list of "transitions", ie. capabilities that can be reduced in the next reduction */
 type ambient =
@@ -168,9 +163,9 @@ let open_ (a, b, parent): ambient = {
 };
 
 let createTransition (ambient, parent): option(transition(ambient)) = {
-  let create (source, target, checkFn, transition) = {
+  let create (source, target, checkFn, capability) = {
     switch (checkFn(source, target)) {
-    | true => Some({transition, source, target})
+    | true => Some({Transition.source: source, target, capability})
     | false => None
     };
   };
@@ -202,8 +197,8 @@ let rec createTransitionTreeRecursive (ambient: ambient): ambient = {
 };
 
 let applyTransition (parent, transition: transition(ambient)) = {
-  let {source, target, transition} = transition;
-  switch transition {
+  let {Transition.source, target, capability} = transition;
+  switch capability {
   | In(_) => enter(source, target, parent)
   | Out_(_) => exit(source, target, parent)
   | Open(_) => open_(source, target, parent)
