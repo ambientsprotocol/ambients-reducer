@@ -40,8 +40,14 @@ let getTransitions (ambient) = {
 
 let getNextAction (ambient) = {
   switch ambient {
-  | Ambient(_, _, caps, _) => List.length(caps) > 0 ? List.nth(caps, 0) : None
+  | Ambient(_, _, caps, _) => {
+    List.length(caps) > 0 ? List.nth(caps, 0) : None
+  }
   };
+};
+
+let getNexActions (a, b) = {
+  (getNextAction(a), getNextAction(b));
 };
 
 let _updatedWith = (ambient: ambient, list) => {

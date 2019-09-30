@@ -5,7 +5,8 @@ let inheritChildren (b, a) = {
 };
 
 let inheritCapabilities (b, a) = {
-  List.concat([getCapabilities(a), getCapabilities(b)]) |> updateCapabilities(a);
+  List.concat([getCapabilities(a), getCapabilities(b)]) 
+  |> updateCapabilities(a);
 };
 
 let consumeCapability (ambient) = {
@@ -55,30 +56,16 @@ let applyTransition (parent, transition: transition(ambient)) = {
 };
 
 let rec applyTransitionsRecursive (ambient): ambient = {
-  let updated1 = List.fold_left((res, child: ambient) => {
-    updateChild(applyTransitionsRecursive(child), res);
-  }, ambient, getChildren(ambient));
-  let updated2 = List.fold_left((res, transition: transition(ambient)) => {
-    applyTransition(res, transition);
-  }, updated1, getTransitions(ambient));
-  Ambient(
-    getName(updated2), 
-    getChildren(updated2), 
-    getCapabilities(updated2), 
-    []
-  );
+  let reducer (res, child: ambient) = updateChild(applyTransitionsRecursive(child), res);
+  let updated1 = List.fold_left(reducer, ambient, getChildren(ambient));
+  let updated2 = List.fold_left(applyTransition, updated1, getTransitions(ambient)) 
+  updateTransitions(updated2, []);
 };
 
 let rec canReduce (ambient) = {
   let hasTransitions (a) = List.length(getTransitions(a)) > 0;
-  switch (hasTransitions(ambient)) {
-  | true => true
-  | false => {
-    List.fold_left((res: bool, acc: ambient) => {
-      res || (hasTransitions(acc) ? true : canReduce(acc));
-    }, false, getChildren(ambient));
-  };
-  };
+  let recursiveReducer (res, acc) = res || (hasTransitions(acc) || canReduce(acc));
+  hasTransitions(ambient) || List.fold_left(recursiveReducer, false, getChildren(ambient));
 };
 
 /* Summary of the reduction logic:
