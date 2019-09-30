@@ -5,15 +5,15 @@ type option('a) =
   | Some('a)
   | None;
 
-type action('a) = {
+type transition('a) = {
   source: 'a, 
   target: 'a, 
-  action: capability
+  transition: capability
 };
 
 /* Ambient has a name, list of children (nested ambients), list of (unused) capabilities and a list of "transitions", ie. capabilities that can be reduced in the next reduction */
 type ambient =
-  | Ambient(name, list(ambient), list(capability), list(action(ambient)));
+  | Ambient(name, list(ambient), list(capability), list(transition(ambient)));
 
 let empty (name): ambient = {
   Ambient(name, [], [], []);
@@ -47,7 +47,7 @@ let getTransitions (ambient) = {
   };
 };
 
-let getNextAction (ambient) = {
+let getNexttransition (ambient) = {
   switch ambient {
   | Ambient(_, _, caps, _) => List.length(caps) > 0 ? List.nth(caps, 0) : None
   };
@@ -119,21 +119,21 @@ let toString (ambient: ambient): string = {
 };
 
 let canEnter (a, b) = {
-  switch (getNextAction(a), getNextAction(b)) {
+  switch (getNexttransition(a), getNexttransition(b)) {
   | (In(c), In_(d)) => c == getName(b) && d == getName(a)
   | _ => false
   };
 };
 
 let canExit (a, b) = {
-  switch (getNextAction(a), getNextAction(b)) {
+  switch (getNexttransition(a), getNexttransition(b)) {
   | (Out_(c), Out(d)) => c == getName(b) && d == getName(a)
   | _ => false
   };
 };
 
 let canOpen (a, b) = {
-  switch (getNextAction(a), getNextAction(b)) {
+  switch (getNexttransition(a), getNexttransition(b)) {
   | (Open(c), Open_) => c == getName(b)
   | _ => false
   };
@@ -167,20 +167,20 @@ let open_ (a, b, parent): ambient = {
   parent |> updateChild(updated);
 };
 
-let createTransition (ambient, parent): option(action(ambient)) = {
-  let transition (source, target, checkFn, action) = {
+let createTransition (ambient, parent): option(transition(ambient)) = {
+  let create (source, target, checkFn, transition) = {
     switch (checkFn(source, target)) {
-    | true => Some({action, source, target})
+    | true => Some({transition, source, target})
     | false => None
     };
   };
-  let processCapability (name, source, checkFn, action) = {
+  let processCapability (name, source, checkFn, transition) = {
     switch (findChild(name, source)) {
     | exception Not_found => None
-    | target => transition(ambient, target, checkFn, action)
+    | target => create(ambient, target, checkFn, transition)
     };
   };
-  switch (getNextAction(ambient)) {
+  switch (getNexttransition(ambient)) {
   | In(name) => processCapability(name, parent, canEnter, In(name))
   | Out_(name) => processCapability(name, ambient, canExit, Out_(name))
   | Open(name) => processCapability(name, ambient, canOpen, Open(name))
@@ -201,9 +201,9 @@ let rec createTransitionTreeRecursive (ambient: ambient): ambient = {
   }, ambient, children);
 };
 
-let applyTransition (parent, transition: action(ambient)) = {
-  let {source, target, action} = transition;
-  switch action {
+let applyTransition (parent, transition: transition(ambient)) = {
+  let {source, target, transition} = transition;
+  switch transition {
   | In(_) => enter(source, target, parent)
   | Out_(_) => exit(source, target, parent)
   | Open(_) => open_(source, target, parent)
@@ -215,7 +215,7 @@ let rec applyTransitionsRecursive (ambient): ambient = {
   let updated1 = List.fold_left((res, child: ambient) => {
     updateChild(applyTransitionsRecursive(child), res);
   }, ambient, getChildren(ambient));
-  let updated2 = List.fold_left((res, transition: action(ambient)) => {
+  let updated2 = List.fold_left((res, transition: transition(ambient)) => {
     applyTransition(res, transition);
   }, updated1, getTransitions(ambient));
   Ambient(
