@@ -17,7 +17,7 @@ let o5 = toString(List.nth(getChildren(List.nth(getChildren(List.nth(getChildren
 print_string(o5);
 print_string("--------\n")
 
-let result = reduceFully(root);
+let result = AmbientReducer.reduceFully(root);
 
 print_string("final state:\n")
 let o5 = toString(result);
