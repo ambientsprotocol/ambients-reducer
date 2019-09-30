@@ -97,6 +97,11 @@ let findChild (name: name, parent: ambient) = {
   }, getChildren(parent));
 };
 
+let inheritChildren (b, a) = addChildren(getChildren(b), a);
+let inheritCapabilities (b, a) = List.concat([getCapabilities(a), getCapabilities(b)]) |> updateCapabilities(a);
+let consumeCapability (ambient) = updateCapabilities(ambient, List.tl(getCapabilities(ambient)));
+let consumeCapabilities (a, b) = (consumeCapability(a), consumeCapability(b));
+
 let toString (ambient: ambient): string = {
   switch ambient {
   | _ => {
@@ -120,19 +125,19 @@ let canEnter (a, b) = {
   };
 };
 
+let canExit (a, b) = {
+  switch (getNextAction(a), getNextAction(b)) {
+  | (Out_(c), Out(d)) => c == getName(b) && d == getName(a)
+  | _ => false
+  };
+};
+
 let canOpen (a, b) = {
   switch (getNextAction(a), getNextAction(b)) {
   | (Open(c), Open_) => c == getName(b)
   | _ => false
   };
 };
-
-/* TODO: canExit */
-
-let inheritChildren (b, a) = addChildren(getChildren(b), a);
-let inheritCapabilities (b, a) = List.concat([getCapabilities(a), getCapabilities(b)]) |> updateCapabilities(a);
-let consumeCapability (ambient) = updateCapabilities(ambient, List.tl(getCapabilities(ambient)));
-let consumeCapabilities (a, b) = (consumeCapability(a), consumeCapability(b));
 
 let enter (a, b, parent): ambient = {
   let (source, target) = consumeCapabilities(a, b);
@@ -142,7 +147,13 @@ let enter (a, b, parent): ambient = {
   parent |> removeChild(source) |> updateChild(updated);
 };
 
-/* TODO: exit */
+let exit (a, b, parent): ambient = {
+  let (target, source) = consumeCapabilities(a, b);
+  /* Add the exiting ambient to its target ambient */
+  let updated = target |> removeChild(source);
+  /* Remove the entering ambient from its parent */
+  parent |> addChild(source) |> updateChild(updated);
+};
 
 let open_ (a, b, parent): ambient = {
   let (source, target) = consumeCapabilities(a, b);
@@ -171,6 +182,7 @@ let createTransition (ambient, parent): option(action(ambient)) = {
   };
   switch (getNextAction(ambient)) {
   | In(name) => processCapability(name, parent, canEnter, In(name))
+  | Out_(name) => processCapability(name, ambient, canExit, Out_(name))
   | Open(name) => processCapability(name, ambient, canOpen, Open(name))
   | _ => None
   };
@@ -193,6 +205,7 @@ let applyTransition (parent, transition: action(ambient)) = {
   let {source, target, action} = transition;
   switch action {
   | In(_) => enter(source, target, parent)
+  | Out_(_) => exit(source, target, parent)
   | Open(_) => open_(source, target, parent)
   | _ => parent
   };
