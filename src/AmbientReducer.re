@@ -80,3 +80,21 @@ let rec reduceFully (ambient) = {
   | false => ambient
   };
 };
+
+let rec reduceFullyDebug (index, ambient) = {
+  let transitionTree = AmbientTransitionTree.createRecursive(ambient);
+  switch (canReduce(transitionTree)) {
+  | true => {
+      index == 0 
+        ? print_string("initial state:\n") 
+        : print_string("step " ++ string_of_int(index) ++ ":\n");
+      print_string(treeToString(ambient));
+      applyTransitionsRecursive(transitionTree) |> reduceFullyDebug(index + 1)
+    }
+  | false => {
+      print_string("final state:\n") 
+      print_string(treeToString(ambient));
+      ambient
+    }
+  };
+};
