@@ -85,3 +85,13 @@ let create6 (): ambient = {
     ], [Out_("c"), Open_], []),
   ], [Open("b")], []);
 };
+
+let create7 (): ambient = {
+  Ambient("a", [
+    Ambient("b", [
+      Ambient("c", [
+        Ambient("d", [], [Out("c"), Open_, Open("b")], [])
+      ], [Out("b"), Out_("d")], [])
+    ], [Out_("c"), Open_], []),
+  ], [Open("d")], []);
+};
