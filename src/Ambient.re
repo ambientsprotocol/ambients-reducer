@@ -94,18 +94,30 @@ let findChild (name: name, parent: ambient) = {
   }, getChildren(parent));
 };
 
-let toString (ambient: ambient): string = {
-  switch ambient {
-  | _ => {
-    let name = "[" ++ getName(ambient);
-    let caps = getCapabilities(ambient);
-    let transitions = getTransitions(ambient);
-    let children = List.map((a) => getName(a), getChildren(ambient));
-    name ++ "]"
-      ++ "\n | nested: " ++ List.fold_left((a, b) => a ++ "[" ++ b ++ "], ", "", children)
-      ++ "\n | caps: " ++ List.fold_left((a, b) => a ++ Capability.toString(b) ++ ".", "", caps)
-      ++ "\n | transitions: " ++ string_of_int(List.length(transitions))
-      ++ "\n"
+let toString (ambient): string = {
+  let name = getName(ambient);
+  let capabilities = getCapabilities(ambient);
+  let caps = Utils.string_of_list(List.mapi((i, e) => {
+    Capability.toString(e) ++ (Utils.isLast(i, capabilities) ? "" : ".");
+  }, capabilities));
+  name ++ "[" ++ caps ++ "]\n";
+}
+
+let treeToString (ambient): string = {
+  let rec format (ambient, prefix: string, first, last: bool): string = {
+    let prefixCurrent = first ? "" : last ? {js|└─ |js} : {js|├─ |js};
+    let result = prefix ++ prefixCurrent ++ toString(ambient);
+    let children = getChildren(ambient);
+    switch (List.length(children)) {
+    | 0 => result
+    | _ => {
+      let prefixChild = prefix ++ (first ? "" : last ? "   " : {js|"│  "|js});
+      let mapped = List.mapi((i, e) => {
+        format(e, prefixChild, false, Utils.isLast(i, children))
+      }, children);
+      result ++ Utils.string_of_list(mapped);
+    };
+    };
   };
-  };
-};
+  format(ambient, "", true, true);
+}

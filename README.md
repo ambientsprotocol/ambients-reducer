@@ -37,37 +37,13 @@ Output:
 --------
 initial state:
 []
- | nested: [a],
- | caps:
- | transitions: 0
-[a]
- | nested: [b], [c],
- | caps: open b.
- | transitions: 0
-[b]
- | nested:
- | caps: in_ c.open c.open_.
- | transitions: 0
-[c]
- | nested: [d],
- | caps: in b.open_.
- | transitions: 0
-[d]
- | nested:
- | caps:
- | transitions: 0
+└─ a[open b]
+   ├─ b[in_ c.open c.open_]
+   └─ c[in b.open_]
+      └─ d[]
 --------
 final state:
 []
- | nested: [a],
- | caps:
- | transitions: 0
-[a]
- | nested: [d],
- | caps:
- | transitions: 0
-[d]
- | nested:
- | caps:
- | transitions: 0
+└─ a[]
+   └─ d[]
 ```
