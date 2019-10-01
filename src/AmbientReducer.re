@@ -26,7 +26,9 @@ let enter (a, b, parent): ambient = {
 };
 
 let exit (a, b, parent): ambient = {
-  let (target, source) = consumeCapabilities(a, b);
+  let c = findChild(getName(a), parent)
+  let d = findChild(getName(b), c)
+  let (target, source) = consumeCapabilities(c, d);
   /* Add the exiting ambient to its target ambient */
   let updated = target |> removeChild(source);
   /* Remove the entering ambient from its parent */
@@ -34,14 +36,16 @@ let exit (a, b, parent): ambient = {
 };
 
 let open_ (a, b, parent): ambient = {
-  let (source, target) = consumeCapabilities(a, b);
+  let c = findChild(getName(a), parent)
+  let d = findChild(getName(b), c)
+  let (source, target) = consumeCapabilities(c, d);
   /* Remove the opening ambient from its parent (source),
   inherit the children and capabilities of the opened ambient and
   update the parent of the ambient that opened the target ambient */
   let updated = source 
     |> removeChild(target)
     |> inheritChildren(target)
-    |> inheritCapabilities(target);  
+    |> inheritCapabilities(target);
   parent |> updateChild(updated);
 };
 
@@ -58,7 +62,7 @@ let applyTransition (parent, transition: transition(ambient)) = {
 let rec applyTransitionsRecursive (ambient): ambient = {
   let reducer (res, child: ambient) = updateChild(applyTransitionsRecursive(child), res);
   let updated1 = List.fold_left(reducer, ambient, getChildren(ambient));
-  let updated2 = List.fold_left(applyTransition, updated1, getTransitions(ambient)) 
+  let updated2 = List.fold_left(applyTransition, updated1, getTransitions(updated1))
   updateTransitions(updated2, []);
 };
 
@@ -83,13 +87,14 @@ let rec reduceFully (ambient) = {
 
 let rec reduceFullyDebug (index, ambient) = {
   let transitionTree = AmbientTransitionTree.createRecursive(ambient);
-  switch (canReduce(transitionTree)) {
+  let res = switch (canReduce(transitionTree)) {
   | true => {
-      index == 0 
+      index == 0
         ? print_string("initial state:\n") 
         : print_string("step " ++ string_of_int(index) ++ ":\n");
-      print_string(treeToString(ambient));
-      applyTransitionsRecursive(transitionTree) |> reduceFullyDebug(index + 1)
+      print_string(treeToString(transitionTree));
+      let res = applyTransitionsRecursive(transitionTree) |> reduceFullyDebug(index + 1)
+      res
     }
   | false => {
       print_string("final state:\n") 
@@ -97,4 +102,5 @@ let rec reduceFullyDebug (index, ambient) = {
       ambient
     }
   };
+  res;
 };
