@@ -47,3 +47,9 @@ final state:
 └─ a[]
    └─ d[]
 ```
+
+Run [Program2.re](https://github.com/haadcode/ambient-reductions/blob/master/src/examples/Program2.re):
+
+```
+node src/examples/Program2.bs.js
+```
