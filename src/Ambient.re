@@ -50,13 +50,19 @@ let getNexActions (a, b) = {
   (getNextAction(a), getNextAction(b));
 };
 
-let _updatedWith = (ambient: ambient, list) => {
-  let takeLeftIfEqual = (a, b) => getName(a) == getName(b) ? a : b;
+let isEqual (a, b) = getName(a) == getName(b);
+
+let _addAll = (ambient: ambient, list) => {
+  List.concat([getChildren(ambient), list]);
+};
+
+let _update = (ambient: ambient, list) => {
+  let takeLeftIfEqual = (a, b) => isEqual(a, b) ? a : b;
   List.map(takeLeftIfEqual(ambient), list);
 };
 
-let _updatedWithout = (ambient: ambient, list) => {
-  List.filter((e) => getName(e) !== getName(ambient), list)
+let _without = (ambient: ambient, list) => {
+  List.filter((e) => !isEqual(e,  ambient), list)
 };
 
 let updateCapabilities (a, capabilities) = {
@@ -72,39 +78,37 @@ let updateTransitions (a, transitions) = {
 };
 
 let updateChild (child, parent) = {
-  let children = _updatedWith(child, getChildren(parent));
-  updateChildren(parent, children);
+  _update(child, getChildren(parent)) 
+  |> updateChildren(parent);
 };
 
 let removeChild (child, parent) = {
-  let children = _updatedWithout(child, getChildren(parent));
-  updateChildren(parent, children);
+  _without(child, getChildren(parent)) 
+  |> updateChildren(parent);
 };
 
-let addChildren (children, parent) = {
-  let children = List.concat([getChildren(parent), children]);
-  updateChildren(parent, children);
+let addChildren (children: list(ambient), parent) = {
+  _addAll(parent, children)
+  |> updateChildren(parent);
+  
 };
 
 let addChild (child, parent) = addChildren([child], parent);
 
 let findChild (name: name, parent: ambient) = {
-  List.find((a) => switch a {
-  | Ambient(n, _, _, _) => n == name
-  }, getChildren(parent));
+  List.find((a) => name == getName(a), getChildren(parent));
 };
 
 let toString (ambient): string = {
   let name = getName(ambient);
   let capabilities = getCapabilities(ambient);
-  let caps = Utils.string_of_list(List.mapi((i, e) => {
-    Capability.toString(e) ++ (Utils.isLast(i, capabilities) ? "" : ".");
-  }, capabilities));
+  let seq = (i, e) => Capability.toString(e) ++ (Utils.isLast(i, capabilities) ? "" : ".");
+  let caps = Utils.string_of_list(List.mapi(seq, capabilities));
   name ++ "[" ++ caps ++ "]\n";
 }
 
 let treeToString (ambient): string = {
-  let rec format (ambient, prefix: string, first, last: bool): string = {
+  let rec format (ambient, prefix: string, first: bool, last: bool): string = {
     let prefixCurrent = first ? "" : last ? {js|└─ |js} : {js|├─ |js};
     let result = prefix ++ prefixCurrent ++ toString(ambient);
     let children = getChildren(ambient);
@@ -112,9 +116,8 @@ let treeToString (ambient): string = {
     | 0 => result
     | _ => {
       let prefixChild = prefix ++ (first ? "" : last ? "   " : {js|"│  "|js});
-      let mapped = List.mapi((i, e) => {
-        format(e, prefixChild, false, Utils.isLast(i, children))
-      }, children);
+      let f = (i, e) => format(e, prefixChild, false, Utils.isLast(i, children));
+      let mapped = List.mapi(f, children);
       result ++ Utils.string_of_list(mapped);
     };
     };

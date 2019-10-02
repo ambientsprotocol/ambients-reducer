@@ -49,13 +49,14 @@ let _createTransition (ambient, parent): option(transition(ambient)) = {
 };
 
 let rec createRecursive (ambient: ambient): ambient = {
-  List.fold_left((res, acc: ambient) => {
+  let create (res, acc: ambient) = {
     let child = createRecursive(acc);
-    let updated = _updatedWith(child, getChildren(res)) |> updateChildren(ambient);
+    let updated = _update(child, getChildren(res)) |> updateChildren(ambient);
     let transition = _createTransition(acc, ambient);
     switch transition {
     | Some(t) => updateTransitions(updated, [t, ...getTransitions(ambient)])
     | None => updated
     };
-  }, ambient, getChildren(ambient));
+  };
+  List.fold_left(create, ambient, getChildren(ambient));
 };
