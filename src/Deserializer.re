@@ -1,16 +1,16 @@
 open Ambient;
 
 type node = {
-  nType: string,
-  id: option(string),
-  children: option(list(node)),
+  name: string,
+  children: list(node),
+  capabilities: list(string)
 };
 
-exception ID_Required(string);
+/* exception ID_Required(string);
 exception Children_Required(string);
-exception Unrecognized(string);
+exception Unrecognized(string); */
 
-let filterAmbients = (nodes: list(node)) => {
+/* let filterAmbients = (nodes: list(node)) => {
   List.filter((node) => {
     switch node.nType {
       | "Ambient" => true
@@ -18,8 +18,8 @@ let filterAmbients = (nodes: list(node)) => {
       | "Parallel" => true
       | _ => false
       }
-  }, nodes)
-}
+  }, nodes);
+};
 
 let filterCapabilities = (nodes: list(node)) => {
   List.filter((node) => {
@@ -28,21 +28,20 @@ let filterCapabilities = (nodes: list(node)) => {
       | "In_" => true
       | _ => false
     }
-  }, nodes)
-}
+  }, nodes);
+}; */
 
 let rec node = json => {
   Json.Decode.{
-    id: json |> optional(field("id", string)),
-    nType: json |> field("type", string),
-    children: json |> optional(field("children", list(node)))
-  }
-}
+    name: json |> field("name", string),
+    children: json |> field("children", list(node)),
+    capabilities: json |> field("capabilities", list(string))
+  };
+};
 
-let fromJSON(json) = {
+let fromJSON(json): ambient = {
   let ast = json |> Json.parseOrRaise |> node;
-
-  let parseCapability = (node: node) => {
+  /* let parseCapability = (node: node) => {
     switch node.nType {
     | "In" => switch node.id {
       | Some(id) => Capability.In(id)
@@ -54,9 +53,13 @@ let fromJSON(json) = {
       }
     | _ => raise(Unrecognized("Unrecognized Capability"))
     }
-  }
-
-  let rec parseAmbient = (node: node) => {
+  };
+ */
+  let rec parseAmbient = (node: node): ambient => {
+    let children = List.map(parseAmbient, node.children);
+    let capabilities = List.map(Capability.fromString, node.capabilities);
+    Ambient.create(Random.int(10000), node.name, children, capabilities, []);
+    /*
     switch node.nType {
     | "Ambient" => switch node.id {
       | Some(id) => {
@@ -84,8 +87,9 @@ let fromJSON(json) = {
       | None => raise(ID_Required("ID is required"));
       }
     | _ => raise(Unrecognized("Unrecognized node type"))
-    }
-  }
+    };
+    */
+  };
 
   parseAmbient(ast);
-}
+};

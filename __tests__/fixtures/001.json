@@ -1,0 +1,174 @@
+{
+  "name": "",
+  "children": [
+    {
+      "name": "string_concat",
+      "children": [
+        {
+          "name": "func",
+          "children": [
+            {
+              "name": "left",
+              "children": [],
+              "capabilities": [
+                "in_ arg",
+                "open arg",
+                "in string",
+                "in concat"
+              ]
+            },
+            {
+              "name": "right",
+              "children": [],
+              "capabilities": [
+                "in_ arg",
+                "open arg",
+                "in string",
+                "in concat"
+              ]
+            },
+            {
+              "name": "string",
+              "children": [
+                {
+                  "name": "concat",
+                  "children": [],
+                  "capabilities": [
+                    "in_ left",
+                    "in_ right"
+                  ]
+                }
+              ],
+              "capabilities": [
+                "in_ left",
+                "in_ right"
+              ]
+            }
+          ],
+          "capabilities": [
+            "open_"
+          ]
+        }
+      ],
+      "capabilities": [
+        "in_ call",
+        "open call",
+        "open return",
+        "open_"
+      ]
+    },
+    {
+      "name": "program",
+      "children": [
+        {
+          "name": "call",
+          "children": [
+            {
+              "name": "return",
+              "children": [],
+              "capabilities": [
+                "open_",
+                "in program",
+                "in func"
+              ]
+            }
+          ],
+          "capabilities": [
+            "out program",
+            "in string_concat",
+            "open_"
+          ]
+        },
+        {
+          "name": "func",
+          "children": [
+            {
+              "name": "arg",
+              "children": [
+                {
+                  "name": "string",
+                  "children": [
+                    {
+                      "name": "hello",
+                      "children": [],
+                      "capabilities": []
+                    }
+                  ],
+                  "capabilities": []
+                }
+              ],
+              "capabilities": [
+                "in left",
+                "open_"
+              ]
+            },
+            {
+              "name": "arg",
+              "children": [
+                {
+                  "name": "string",
+                  "children": [
+                    {
+                      "name": "world",
+                      "children": [],
+                      "capabilities": []
+                    }
+                  ],
+                  "capabilities": []
+                }
+              ],
+              "capabilities": [
+                "in right",
+                "open_"
+              ]
+            }
+          ],
+          "capabilities": [
+            "in_ string_concat",
+            "open string_concat",
+            "open func",
+            "open_"
+          ]
+        }
+      ],
+      "capabilities": [
+        "in_ call",
+        "open call",
+        "out_ call",
+        "in_ string_concat",
+        "open func",
+        "open return",
+        "open_"
+      ]
+    },
+    {
+      "name": "call",
+      "children": [
+        {
+          "name": "return",
+          "children": [],
+          "capabilities": [
+            "open_",
+            "in func"
+          ]
+        }
+      ],
+      "capabilities": [
+        "in program",
+        "open_"
+      ]
+    },
+    {
+      "name": "func",
+      "children": [],
+      "capabilities": [
+        "in_ program",
+        "open program",
+        "open_"
+      ]
+    }
+  ],
+  "capabilities": [
+    "open func"
+  ]
+}

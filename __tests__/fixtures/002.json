@@ -1,0 +1,56 @@
+{
+  "name": "",
+  "children": [
+    {
+      "name": "a",
+      "children": [
+        {
+          "name": "string",
+          "children": [
+            {
+              "name": "hello",
+              "children": [],
+              "capabilities": []
+            }
+          ],
+          "capabilities": []
+        }
+      ],
+      "capabilities": [
+        "in_ call",
+        "open call",
+        "open return",
+        "open_"
+      ]
+    },
+    {
+      "name": "call",
+      "children": [
+        {
+          "name": "return",
+          "children": [],
+          "capabilities": [
+            "open_",
+            "in func"
+          ]
+        }
+      ],
+      "capabilities": [
+        "in a",
+        "open_"
+      ]
+    },
+    {
+      "name": "func",
+      "children": [],
+      "capabilities": [
+        "in_ a",
+        "open a",
+        "open_"
+      ]
+    }
+  ],
+  "capabilities": [
+    "open func"
+  ]
+}

@@ -1,7 +1,7 @@
 open Ambient;
 
 let ambient = TestAmbients.create2();
-let root = Ambient("", [ambient], [], []);
+let root = Ambient(-1, "", [ambient], [], []);
 
 print_string("--------\n")
 print_string("initial state:\n")

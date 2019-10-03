@@ -9,44 +9,49 @@ type transition('a) = Transition.t('a);
    - list of "transitions", ie. capabilities that can be reduced in the next reduction
 */
 type ambient =
-  | Ambient(name, list(ambient), list(capability), list(transition(ambient)))
-  | Parallel(list(ambient));
+  | Ambient(int, name, list(ambient), list(capability), list(transition(ambient)));
 
-let empty (name): ambient = {
-  Ambient(name, [], [], []);
+let empty (id, name): ambient = {
+  Ambient(id, name, [], [], []);
 };
 
-let create (name, children, capabilities, transitions): ambient = {
-  Ambient(name, children, capabilities, transitions);
+let create (id, name, children, capabilities, transitions): ambient = {
+  Ambient(id, name, children, capabilities, transitions);
+};
+
+let getId (ambient) = {
+  switch ambient {
+  | Ambient(id, _, _, _, _) => id
+  };
 };
 
 let getName (ambient) = {
   switch ambient {
-  | Ambient(name, _, _, _) => name
+  | Ambient(_, name, _, _, _) => name
   };
 };
 
 let getChildren (ambient) = {
   switch ambient {
-  | Ambient(_, children, _, _) => children
+  | Ambient(_, _, children, _, _) => children
   };
 };
 
 let getCapabilities (ambient) = {
   switch ambient {
-  | Ambient(_, _, capabilities, _) => capabilities
+  | Ambient(_, _, _, capabilities, _) => capabilities
   };
 };
 
 let getTransitions (ambient) = {
   switch ambient {
-  | Ambient(_, _, _, transitions) => transitions
+  | Ambient(_, _, _, _, transitions) => transitions
   };
 };
 
 let getNextAction (ambient) = {
   switch ambient {
-  | Ambient(_, _, caps, _) => {
+  | Ambient(_, _, _, caps, _) => {
     List.length(caps) > 0 ? List.nth(caps, 0) : None
   }
   };
@@ -56,7 +61,7 @@ let getNexActions (a, b) = {
   (getNextAction(a), getNextAction(b));
 };
 
-let isEqual (a, b) = getName(a) == getName(b);
+let isEqual (a, b) = getId(a) == getId(b)
 
 let _addAll = (ambient: ambient, list) => {
   List.concat([getChildren(ambient), list]);
@@ -72,15 +77,15 @@ let _without = (ambient: ambient, list) => {
 };
 
 let updateCapabilities (a, capabilities) = {
-  Ambient(getName(a), getChildren(a), capabilities, getTransitions(a));
+  Ambient(getId(a), getName(a), getChildren(a), capabilities, getTransitions(a));
 };
 
 let updateChildren (a, children) = {
-  Ambient(getName(a), children, getCapabilities(a), getTransitions(a));
+  Ambient(getId(a), getName(a), children, getCapabilities(a), getTransitions(a));
 };
 
 let updateTransitions (a, transitions) = {
-  Ambient(getName(a), getChildren(a), getCapabilities(a), transitions);
+  Ambient(getId(a), getName(a), getChildren(a), getCapabilities(a), transitions);
 };
 
 let updateChild (child, parent) = {
@@ -101,8 +106,12 @@ let addChildren (children: list(ambient), parent) = {
 
 let addChild (child, parent) = addChildren([child], parent);
 
-let findChild (name: name, parent: ambient) = {
-  List.find((a) => name == getName(a), getChildren(parent));
+let findAllChildren (name: name, parent: ambient) = {
+  List.find_all((a) => name == getName(a), getChildren(parent));
+};
+
+let findChild (id: int, parent: ambient) = {
+  List.find((a) => id == getId(a), getChildren(parent));
 };
 
 let toString (ambient): string = {
@@ -121,7 +130,7 @@ let treeToString (ambient): string = {
     switch (List.length(children)) {
     | 0 => result
     | _ => {
-      let prefixChild = prefix ++ (first ? "" : last ? "   " : {js|"│  "|js});
+      let prefixChild = prefix ++ (first ? "" : last ? "   " : {js|│  |js});
       let f = (i, e) => format(e, prefixChild, false, Utils.isLast(i, children));
       let mapped = List.mapi(f, children);
       result ++ Utils.string_of_list(mapped);

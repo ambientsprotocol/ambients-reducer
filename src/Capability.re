@@ -20,3 +20,15 @@ let toString (capability: t) = {
   | None => ""
   };
 };
+
+let fromString (s: string): t = {
+  switch (Array.to_list(Js.String.split(" ", s))) {
+  | ["in", x] => In(x)
+  | ["in_", x] => In_(x)
+  | ["out", x] => Out(x)
+  | ["out_", x] => Out_(x)
+  | ["open", x] => Open(x)
+  | ["open_"] => Open_
+  | _ => None
+  };
+};

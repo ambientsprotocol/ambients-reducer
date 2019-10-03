@@ -5,7 +5,9 @@ let inheritChildren (b, a) = {
 };
 
 let inheritCapabilities (b, a) = {
-  List.concat([getCapabilities(a), getCapabilities(b)]) 
+  /* List.concat([getCapabilities(a), getCapabilities(b)])  */
+  /* TODO: need to apply them in this order until parallal caps are supported */
+  List.concat([getCapabilities(b), getCapabilities(a)])
   |> updateCapabilities(a);
 };
 
@@ -26,8 +28,8 @@ let enter (a, b, parent): ambient = {
 };
 
 let exit (a, b, parent): ambient = {
-  let c = findChild(getName(a), parent)
-  let d = findChild(getName(b), c)
+  let c = findChild(getId(a), parent)
+  let d = findChild(getId(b), c)
   let (target, source) = consumeCapabilities(c, d);
   /* Add the exiting ambient to its target ambient */
   let updated = target |> removeChild(source);
@@ -36,8 +38,10 @@ let exit (a, b, parent): ambient = {
 };
 
 let open_ (a, b, parent): ambient = {
-  let c = findChild(getName(a), parent)
-  let d = findChild(getName(b), c)
+  /* Find the child from the parent, 
+  if we can't find it assume 'a' is the root ambient */
+  let c = Utils.orElse(findChild(getId(a)), parent);
+  let d = findChild(getId(b), c)
   let (source, target) = consumeCapabilities(c, d);
   /* Remove the opening ambient from its parent (source),
   inherit the children and capabilities of the opened ambient and
@@ -46,7 +50,12 @@ let open_ (a, b, parent): ambient = {
     |> removeChild(target)
     |> inheritChildren(target)
     |> inheritCapabilities(target);
-  parent |> updateChild(updated);
+
+  /* check if this was the root ambient */
+  switch (isEqual(source, parent)) {
+  | true => updated
+  | false => parent |> updateChild(updated)
+  }
 };
 
 let applyTransition (parent, transition: transition(ambient)) = {
@@ -87,7 +96,7 @@ let rec reduceFully (ambient) = {
 
 let rec reduceFullyDebug (index, ambient) = {
   let transitionTree = AmbientTransitionTree.createRecursive(ambient);
-  let res = switch (canReduce(transitionTree)) {
+  switch (canReduce(transitionTree)) {
   | true => {
       index == 0
         ? print_string("initial state:\n") 
@@ -102,5 +111,4 @@ let rec reduceFullyDebug (index, ambient) = {
       ambient
     }
   };
-  res;
 };

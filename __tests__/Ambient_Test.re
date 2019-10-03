@@ -4,23 +4,25 @@ open Ambient;
 
 describe("Ambient", () => {
   test("create", () => {
-    let amb: ambient = Ambient.empty("a");
-    expect(amb) |> toEqual(Ambient("a", [], [], []))
+    let amb: ambient = Ambient.empty(0, "a");
+    expect(amb) |> toEqual(Ambient(0, "a", [], [], []))
   });
 
   test("createTestAmbient1", () => {
-    let expected = Ambient("a", [
-      Ambient("b", [], [], []),
-      Ambient("c", [], [], [])
+    let expected = Ambient(0, "a", [
+      Ambient(1, "b", [], [], []),
+      Ambient(2, "c", [], [], [])
     ], [], []);
     let amb: ambient = TestAmbients.create1();
     expect(amb) |> toEqual(expected)
   });
 
   test("createTestAmbient2", () => {
-    let expected = Ambient("a", [
-        Ambient("b", [], [In_("c"), Open("c"), Open_], []),
-        Ambient("c", [Ambient("d", [], [], [])], [In("b"), Open_], [])
+    let expected = Ambient(0, "a", [
+        Ambient(1, "b", [], [In_("c"), Open("c"), Open_], []),
+        Ambient(2, "c", [
+          Ambient(3, "d", [], [], [])
+        ], [In("b"), Open_], [])
       ], [
         Open("b")
       ], []);

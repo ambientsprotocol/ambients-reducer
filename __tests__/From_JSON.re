@@ -1,4 +1,4 @@
-open Jest;
+/* open Jest;
 open Expect;
 open Ambient;
 
@@ -8,7 +8,7 @@ describe("From JSON", () => {
   test("001", () => {
     let json = {| { "id": "a", "type": "Noop" } |}
     let amb: ambient = Deserializer.fromJSON(json);
-    let expected = Ambient("a", [], [], [])
+    let expected = Ambient(0, "a", [], [], [])
     expect(amb) |> toEqual(expected)
   });
 
@@ -72,4 +72,4 @@ describe("From JSON", () => {
     expect(amb) |> toEqual(expected)
   });
 });
-      // (* read [package.json] file *)
+      // (* read [package.json] file *) */
