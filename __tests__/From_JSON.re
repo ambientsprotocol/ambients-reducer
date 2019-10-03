@@ -7,7 +7,7 @@ type capability = Capability.t;
 describe("From JSON", () => {
   test("001", () => {
     let json = {| { "id": "a", "type": "Noop" } |}
-    let amb: ambient = Ambient.fromJSON(json);
+    let amb: ambient = Deserializer.fromJSON(json);
     let expected = Ambient("a", [], [], [])
     expect(amb) |> toEqual(expected)
   });
@@ -30,7 +30,7 @@ describe("From JSON", () => {
       ],
       "type": "Parallel"
     } |}
-    let amb: ambient = Ambient.fromJSON(json);
+    let amb: ambient = Deserializer.fromJSON(json);
     let expected = Parallel([
       Ambient("a", [Ambient("b", [], [], [])], [], []),
       Ambient("c", [], [], [])
@@ -63,7 +63,7 @@ describe("From JSON", () => {
 }
 
     |};
-    let amb: ambient = Ambient.fromJSON(json);
+    let amb: ambient = Deserializer.fromJSON(json);
     let expected =
       Parallel([
         Ambient("a", [], [In("b")], []),
