@@ -6,3 +6,4 @@ let orElse (a, b) = {
   | x => x
   };
 };
+let generateId () = Random.int(10000);

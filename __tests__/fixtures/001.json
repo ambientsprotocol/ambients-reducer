@@ -3,142 +3,185 @@
   "children": [
     {
       "name": "string_concat",
-      "children": [
-        {
-          "name": "func",
-          "children": [
-            {
-              "name": "left",
-              "children": [],
-              "capabilities": [
-                "in_ arg",
-                "open arg",
-                "in string",
-                "in concat"
-              ]
-            },
-            {
-              "name": "right",
-              "children": [],
-              "capabilities": [
-                "in_ arg",
-                "open arg",
-                "in string",
-                "in concat"
-              ]
-            },
-            {
-              "name": "string",
-              "children": [
-                {
-                  "name": "concat",
-                  "children": [],
-                  "capabilities": [
-                    "in_ left",
-                    "in_ right"
-                  ]
-                }
-              ],
-              "capabilities": [
-                "in_ left",
-                "in_ right"
-              ]
-            }
-          ],
-          "capabilities": [
-            "open_"
-          ]
-        }
-      ],
+      "children": [],
       "capabilities": [
         "in_ call",
         "open call",
-        "open return",
-        "open_"
+        "create"
+      ],
+      "create": [
+        {
+          "name": "",
+          "children": [
+            {
+              "name": "func",
+              "children": [
+                {
+                  "name": "left",
+                  "children": [],
+                  "capabilities": [
+                    "in_ arg",
+                    "open arg",
+                    "in string",
+                    "in concat"
+                  ],
+                  "create": []
+                },
+                {
+                  "name": "right",
+                  "children": [],
+                  "capabilities": [
+                    "in_ arg",
+                    "open arg",
+                    "in string",
+                    "in concat"
+                  ],
+                  "create": []
+                },
+                {
+                  "name": "string",
+                  "children": [
+                    {
+                      "name": "concat",
+                      "children": [],
+                      "capabilities": [
+                        "in_ left",
+                        "in_ right"
+                      ],
+                      "create": []
+                    }
+                  ],
+                  "capabilities": [
+                    "in_ left",
+                    "in_ right"
+                  ],
+                  "create": []
+                }
+              ],
+              "capabilities": [
+                "open_"
+              ],
+              "create": []
+            }
+          ],
+          "capabilities": [
+            "open return",
+            "open_"
+          ],
+          "create": []
+        }
       ]
     },
     {
       "name": "program",
-      "children": [
-        {
-          "name": "call",
-          "children": [
-            {
-              "name": "return",
-              "children": [],
-              "capabilities": [
-                "open_",
-                "in program",
-                "in func"
-              ]
-            }
-          ],
-          "capabilities": [
-            "out program",
-            "in string_concat",
-            "open_"
-          ]
-        },
-        {
-          "name": "func",
-          "children": [
-            {
-              "name": "arg",
-              "children": [
-                {
-                  "name": "string",
-                  "children": [
-                    {
-                      "name": "hello",
-                      "children": [],
-                      "capabilities": []
-                    }
-                  ],
-                  "capabilities": []
-                }
-              ],
-              "capabilities": [
-                "in left",
-                "open_"
-              ]
-            },
-            {
-              "name": "arg",
-              "children": [
-                {
-                  "name": "string",
-                  "children": [
-                    {
-                      "name": "world",
-                      "children": [],
-                      "capabilities": []
-                    }
-                  ],
-                  "capabilities": []
-                }
-              ],
-              "capabilities": [
-                "in right",
-                "open_"
-              ]
-            }
-          ],
-          "capabilities": [
-            "in_ string_concat",
-            "open string_concat",
-            "open func",
-            "open_"
-          ]
-        }
-      ],
+      "children": [],
       "capabilities": [
         "in_ call",
         "open call",
-        "out_ call",
-        "in_ string_concat",
-        "open func",
-        "open return",
-        "open_"
+        "create"
+      ],
+      "create": [
+        {
+          "name": "",
+          "children": [
+            {
+              "name": "call",
+              "children": [
+                {
+                  "name": "return",
+                  "children": [],
+                  "capabilities": [
+                    "open_",
+                    "in program",
+                    "in func"
+                  ],
+                  "create": []
+                }
+              ],
+              "capabilities": [
+                "out program",
+                "in string_concat",
+                "open_"
+              ],
+              "create": []
+            },
+            {
+              "name": "func",
+              "children": [],
+              "capabilities": [
+                "in_ string_concat",
+                "open string_concat",
+                "create"
+              ],
+              "create": [
+                {
+                  "name": "",
+                  "children": [
+                    {
+                      "name": "arg",
+                      "children": [
+                        {
+                          "name": "string",
+                          "children": [
+                            {
+                              "name": "hello",
+                              "children": [],
+                              "capabilities": [],
+                              "create": []
+                            }
+                          ],
+                          "capabilities": [],
+                          "create": []
+                        }
+                      ],
+                      "capabilities": [
+                        "in left",
+                        "open_"
+                      ],
+                      "create": []
+                    },
+                    {
+                      "name": "arg",
+                      "children": [
+                        {
+                          "name": "string",
+                          "children": [
+                            {
+                              "name": "world",
+                              "children": [],
+                              "capabilities": [],
+                              "create": []
+                            }
+                          ],
+                          "capabilities": [],
+                          "create": []
+                        }
+                      ],
+                      "capabilities": [
+                        "in right",
+                        "open_"
+                      ],
+                      "create": []
+                    }
+                  ],
+                  "capabilities": [
+                    "open func",
+                    "open_"
+                  ],
+                  "create": []
+                }
+              ]
+            }
+          ],
+          "capabilities": [
+            "out_ call",
+            "in_ string_concat",
+            "open func",
+            "open return",
+            "open_"
+          ],
+          "create": []
+        }
       ]
     },
     {
@@ -150,13 +193,15 @@
           "capabilities": [
             "open_",
             "in func"
-          ]
+          ],
+          "create": []
         }
       ],
       "capabilities": [
         "in program",
         "open_"
-      ]
+      ],
+      "create": []
     },
     {
       "name": "func",
@@ -165,10 +210,12 @@
         "in_ program",
         "open program",
         "open_"
-      ]
+      ],
+      "create": []
     }
   ],
   "capabilities": [
     "open func"
-  ]
+  ],
+  "create": []
 }

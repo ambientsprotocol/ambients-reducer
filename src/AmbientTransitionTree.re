@@ -48,6 +48,7 @@ let _createTransitions (ambient, parent): list(transition(ambient)) = {
   | In(name) => processCapability(name, parent, canEnter, In(name))
   | Out_(name) => processCapability(name, ambient, canExit, Out_(name))
   | Open(name) => processCapability(name, ambient, canOpen, Open(name))
+  | Create => [create(ambient, parent, (_, _) => true, Create)]
   | _ => [None]
   };
   List.fold_left(_filterTransitionsReducer, [], transitions);
@@ -66,8 +67,8 @@ let rec _createRecursive (ambient: ambient): ambient = {
 };
 
 let createRecursive (ambient) = {
-  let res = _createRecursive(ambient);
-  let updated = _update(ambient, getChildren(res)) |> updateChildren(res);
+  let child = _createRecursive(ambient);
+  let updated = _update(child, getChildren(child)) |> updateChildren(child);
   let transitions = _createTransitions(ambient, ambient);
   List.fold_left((res, acc) => {
     updateTransitions(res, [acc, ...getTransitions(res)]) 
