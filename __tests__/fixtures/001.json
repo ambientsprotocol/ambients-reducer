@@ -5,9 +5,19 @@
       "name": "string_concat",
       "children": [],
       "capabilities": [
-        "in_ call",
-        "open call",
-        "create"
+        {
+          "op": "in_",
+          "target": "call",
+          "next": {
+            "op": "open",
+            "target": "call",
+            "next": {
+              "op": "create",
+              "target": "",
+              "next": null
+            }
+          }
+        }
       ],
       "create": [
         {
@@ -20,10 +30,23 @@
                   "name": "left",
                   "children": [],
                   "capabilities": [
-                    "in_ arg",
-                    "open arg",
-                    "in string",
-                    "in concat"
+                    {
+                      "op": "in_",
+                      "target": "arg",
+                      "next": {
+                        "op": "open",
+                        "target": "arg",
+                        "next": {
+                          "op": "in",
+                          "target": "string",
+                          "next": {
+                            "op": "in",
+                            "target": "concat",
+                            "next": null
+                          }
+                        }
+                      }
+                    }
                   ],
                   "create": []
                 },
@@ -31,10 +54,23 @@
                   "name": "right",
                   "children": [],
                   "capabilities": [
-                    "in_ arg",
-                    "open arg",
-                    "in string",
-                    "in concat"
+                    {
+                      "op": "in_",
+                      "target": "arg",
+                      "next": {
+                        "op": "open",
+                        "target": "arg",
+                        "next": {
+                          "op": "in",
+                          "target": "string",
+                          "next": {
+                            "op": "in",
+                            "target": "concat",
+                            "next": null
+                          }
+                        }
+                      }
+                    }
                   ],
                   "create": []
                 },
@@ -45,28 +81,55 @@
                       "name": "concat",
                       "children": [],
                       "capabilities": [
-                        "in_ left",
-                        "in_ right"
+                        {
+                          "op": "in_",
+                          "target": "left",
+                          "next": null
+                        },
+                        {
+                          "op": "in_",
+                          "target": "right",
+                          "next": null
+                        }
                       ],
                       "create": []
                     }
                   ],
                   "capabilities": [
-                    "in_ left",
-                    "in_ right"
+                    {
+                      "op": "in_",
+                      "target": "left",
+                      "next": null
+                    },
+                    {
+                      "op": "in_",
+                      "target": "right",
+                      "next": null
+                    }
                   ],
                   "create": []
                 }
               ],
               "capabilities": [
-                "open_"
+                {
+                  "op": "open_",
+                  "target": "",
+                  "next": null
+                }
               ],
               "create": []
             }
           ],
           "capabilities": [
-            "open return",
-            "open_"
+            {
+              "op": "open",
+              "target": "return",
+              "next": {
+                "op": "open_",
+                "target": "",
+                "next": null
+              }
+            }
           ],
           "create": []
         }
@@ -76,9 +139,19 @@
       "name": "program",
       "children": [],
       "capabilities": [
-        "in_ call",
-        "open call",
-        "create"
+        {
+          "op": "in_",
+          "target": "call",
+          "next": {
+            "op": "open",
+            "target": "call",
+            "next": {
+              "op": "create",
+              "target": "",
+              "next": null
+            }
+          }
+        }
       ],
       "create": [
         {
@@ -86,32 +159,66 @@
           "children": [
             {
               "name": "call",
-              "children": [
+              "children": [],
+              "capabilities": [
+                {
+                  "op": "out",
+                  "target": "program",
+                  "next": {
+                    "op": "in",
+                    "target": "string_concat",
+                    "next": {
+                      "op": "open_",
+                      "target": "",
+                      "next": {
+                        "op": "create",
+                        "target": "",
+                        "next": null
+                      }
+                    }
+                  }
+                }
+              ],
+              "create": [
                 {
                   "name": "return",
                   "children": [],
                   "capabilities": [
-                    "open_",
-                    "in program",
-                    "in func"
+                    {
+                      "op": "open_",
+                      "target": "",
+                      "next": {
+                        "op": "in",
+                        "target": "program",
+                        "next": {
+                          "op": "in",
+                          "target": "func",
+                          "next": null
+                        }
+                      }
+                    }
                   ],
                   "create": []
                 }
-              ],
-              "capabilities": [
-                "out program",
-                "in string_concat",
-                "open_"
-              ],
-              "create": []
+              ]
             },
             {
               "name": "func",
               "children": [],
               "capabilities": [
-                "in_ string_concat",
-                "open string_concat",
-                "create"
+                {
+                  "op": "in_",
+                  "target": "string_concat",
+                  "next": {
+                    "op": "open",
+                    "target": "string_concat",
+                    "next": {
+                      "op": "create",
+                      "target": "",
+                      "next": null
+                    }
+                  }
+                }
               ],
               "create": [
                 {
@@ -135,8 +242,15 @@
                         }
                       ],
                       "capabilities": [
-                        "in left",
-                        "open_"
+                        {
+                          "op": "in",
+                          "target": "left",
+                          "next": {
+                            "op": "open_",
+                            "target": "",
+                            "next": null
+                          }
+                        }
                       ],
                       "create": []
                     },
@@ -158,15 +272,29 @@
                         }
                       ],
                       "capabilities": [
-                        "in right",
-                        "open_"
+                        {
+                          "op": "in",
+                          "target": "right",
+                          "next": {
+                            "op": "open_",
+                            "target": "",
+                            "next": null
+                          }
+                        }
                       ],
                       "create": []
                     }
                   ],
                   "capabilities": [
-                    "open func",
-                    "open_"
+                    {
+                      "op": "open",
+                      "target": "func",
+                      "next": {
+                        "op": "open_",
+                        "target": "",
+                        "next": null
+                      }
+                    }
                   ],
                   "create": []
                 }
@@ -174,11 +302,28 @@
             }
           ],
           "capabilities": [
-            "out_ call",
-            "in_ string_concat",
-            "open func",
-            "open return",
-            "open_"
+            {
+              "op": "out_",
+              "target": "call",
+              "next": {
+                "op": "in_",
+                "target": "string_concat",
+                "next": null
+              }
+            },
+            {
+              "op": "open",
+              "target": "func",
+              "next": {
+                "op": "open",
+                "target": "return",
+                "next": {
+                  "op": "open_",
+                  "target": "",
+                  "next": null
+                }
+              }
+            }
           ],
           "create": []
         }
@@ -186,36 +331,68 @@
     },
     {
       "name": "call",
-      "children": [
+      "children": [],
+      "capabilities": [
+        {
+          "op": "in",
+          "target": "program",
+          "next": {
+            "op": "open_",
+            "target": "",
+            "next": {
+              "op": "create",
+              "target": "",
+              "next": null
+            }
+          }
+        }
+      ],
+      "create": [
         {
           "name": "return",
           "children": [],
           "capabilities": [
-            "open_",
-            "in func"
+            {
+              "op": "open_",
+              "target": "",
+              "next": {
+                "op": "in",
+                "target": "func",
+                "next": null
+              }
+            }
           ],
           "create": []
         }
-      ],
-      "capabilities": [
-        "in program",
-        "open_"
-      ],
-      "create": []
+      ]
     },
     {
       "name": "func",
       "children": [],
       "capabilities": [
-        "in_ program",
-        "open program",
-        "open_"
+        {
+          "op": "in_",
+          "target": "program",
+          "next": {
+            "op": "open",
+            "target": "program",
+            "next": {
+              "op": "open_",
+              "target": "",
+              "next": null
+            }
+          }
+        }
       ],
       "create": []
     }
   ],
   "capabilities": [
-    "open func"
+    {
+      "op": "open",
+      "target": "func",
+      "next": null
+    }
   ],
   "create": []
 }

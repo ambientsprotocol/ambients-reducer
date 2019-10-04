@@ -1,97 +1,60 @@
-open Ambient;
+type ambient = Ambient.ambient;
+open Capability;
+
+type cap = {
+  op: string, 
+  target: string, 
+  next: option(cap)
+};
 
 type node = {
   name: string,
   children: list(node),
-  capabilities: list(string),
+  capabilities: list(cap),
   create: list(node)
 };
 
-/* exception ID_Required(string);
-exception Children_Required(string);
-exception Unrecognized(string); */
-
-/* let filterAmbients = (nodes: list(node)) => {
-  List.filter((node) => {
-    switch node.nType {
-      | "Ambient" => true
-      | "Noop" => true
-      | "Parallel" => true
-      | _ => false
-      }
-  }, nodes);
+let rec toCapability (capability: cap) = {
+  let create (e, next) = switch (e.op) {
+  | "in" => In(e.target, next)
+  | "in_" => In_(e.target, next)
+  | "out" => Out(e.target, next)
+  | "out_" => Out_(e.target, next)
+  | "open" => Open(e.target, next)
+  | "open_" => Open_(next)
+  | "create" => Create
+  | _ => None
+  };
+  switch capability.next {
+  | Some(x) => create(capability, toCapability(x))
+  | None => create(capability, None)
+  }
 };
 
-let filterCapabilities = (nodes: list(node)) => {
-  List.filter((node) => {
-    switch node.nType {
-      | "In" => true
-      | "In_" => true
-      | _ => false
-    }
-  }, nodes);
-}; */
+let rec capability = json => {
+  Json.Decode.{
+    op: json |> field("op", string),
+    target: json |> field("target", string),
+    next: json |> optional(field("next", capability))
+  };
+};
 
 let rec node = json => {
   Json.Decode.{
     name: json |> field("name", string),
     children: json |> field("children", list(node)),
-    capabilities: json |> field("capabilities", list(string)),
+    capabilities: json |> field("capabilities", list(capability)),
     create: json |> field("create", list(node))
   };
 };
 
 let fromJSON(json): ambient = {
   let ast = json |> Json.parseOrRaise |> node;
-  /* let parseCapability = (node: node) => {
-    switch node.nType {
-    | "In" => switch node.id {
-      | Some(id) => Capability.In(id)
-      | None => raise(ID_Required("ID is required"));
-      }
-    | "In_" => switch node.id {
-      | Some(id) => Capability.In_(id)
-      | None => raise(ID_Required("ID is required"));
-      }
-    | _ => raise(Unrecognized("Unrecognized Capability"))
-    }
-  };
- */
   let rec parseAmbient = (node: node): ambient => {
     let children = List.map(parseAmbient, node.children);
-    let capabilities = List.map(Capability.fromString, node.capabilities);
+    let capabilities = List.map(toCapability, node.capabilities);
     let create = List.map(parseAmbient, node.create);
     Ambient.create(Utils.generateId(), node.name, children, capabilities, [], create);
-    /*
-    switch node.nType {
-    | "Ambient" => switch node.id {
-      | Some(id) => {
-        switch node.children {
-        | Some(children) => {
-          let childs = filterAmbients(children) |> List.map(parseAmbient);
-          let capabilities = filterCapabilities(children) |> List.map(parseCapability);
-          let transitions = [];
-          Ambient(id, childs, capabilities, transitions)
-        }
-        | None => Ambient(id, [], [], [])
-        }
-      }
-      | None => raise(ID_Required("ID is required"))
-      }
-    | "Parallel" => switch node.children {
-      | Some(children) => {
-        let childs = List.map(parseAmbient, children);
-        Parallel(childs)
-      }
-      | None => raise(Children_Required("Children are required"))
-      }
-    | "Noop" => switch node.id {
-      | Some(id) => Ambient(id, [], [], [])
-      | None => raise(ID_Required("ID is required"));
-      }
-    | _ => raise(Unrecognized("Unrecognized node type"))
-    };
-    */
   };
 
   parseAmbient(ast);

@@ -1,5 +1,5 @@
 type name = Name.t;
-type capability = Capability.t;
+type capability = Capability.capability;
 type transition('a) = Transition.t('a);
 
 /* Ambient has:
@@ -55,22 +55,10 @@ let getSpawns (ambient) = {
   };
 };
 
-let getSpawn (name, ambient) = {
+let getNextSpawn (ambient) = {
   switch ambient {
   | Ambient(_, _, _, _, _, spawns) => List.hd(spawns)
   };
-};
-
-let getNextAction (ambient) = {
-  switch ambient {
-  | Ambient(_, _, _, caps, _, _) => {
-    List.length(caps) > 0 ? List.nth(caps, 0) : None
-  }
-  };
-};
-
-let getNexActions (a, b) = {
-  (getNextAction(a), getNextAction(b));
 };
 
 let isEqual (a, b) = getId(a) == getId(b)
@@ -117,7 +105,6 @@ let removeChild (child, parent) = {
 let addChildren (children: list(ambient), parent) = {
   _addAll(parent, children)
   |> updateChildren(parent);
-  
 };
 
 let addChild (child, parent) = addChildren([child], parent);
@@ -130,15 +117,15 @@ let findChild (id: int, parent: ambient) = {
   List.find((a) => id == getId(a), getChildren(parent));
 };
 
-let rec toString (ambient): string = {
+let toString (ambient): string = {
   let name = getName(ambient);
   let capabilities = getCapabilities(ambient);
-  let seq = (i, e) => Capability.toString(e) ++ (Utils.isLast(i, capabilities) ? "" : ".");
+  let seq = (i, e) => Capability.treeToString(e) ++ (Utils.isLast(i, capabilities) ? "" : " | ");
   let caps = Utils.string_of_list(List.mapi(seq, capabilities));
   name ++ "[" ++ caps ++ "]\n";
-}
-and
-treeToString (ambient): string = {
+};
+
+let treeToString (ambient): string = {
   let rec format (ambient, prefix: string, first: bool, last: bool): string = {
     let prefixCurrent = first ? "" : last ? {js|└─ |js} : {js|├─ |js};
     let result = prefix ++ prefixCurrent ++ toString(ambient);

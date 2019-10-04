@@ -1,37 +1,47 @@
 type name = Name.t;
 
-type t =
+type capability =
   | Create
-  | In(name)
-  | In_(name)
-  | Out(name)
-  | Out_(name)
-  | Open(name)
-  | Open_
+  | In(name, capability)
+  | In_(name, capability)
+  | Out(name, capability)
+  | Out_(name, capability)
+  | Open(name, capability)
+  | Open_(capability)
   | None;
 
-let toString (capability: t) = {
+let isEqual (a, b) = a == b
+
+let getNext (capability) = {
   switch capability {
-  | Create => "create"
-  | In(x) => "in " ++ x
-  | In_(x) => "in_ " ++ x
-  | Out(x) => "out " ++ x
-  | Out_(x) => "out_ " ++ x
-  | Open(x) => "open " ++ x
-  | Open_ => "open_"
-  | None => ""
+  | Create => None
+  | In(_, x) => x
+  | In_(_, x) => x
+  | Out(_, x) => x
+  | Out_(_, x) => x
+  | Open(_, x) => x
+  | Open_(x) => x
+  | _ => None
   };
 };
 
-let fromString (s: string): t = {
-  switch (Array.to_list(Js.String.split(" ", s))) {
-  | ["create"] => Create
-  | ["in", x] => In(x)
-  | ["in_", x] => In_(x)
-  | ["out", x] => Out(x)
-  | ["out_", x] => Out_(x)
-  | ["open", x] => Open(x)
-  | ["open_"] => Open_
-  | _ => None
+let toString (capability: capability) = {
+  switch capability {
+  | Create => "create"
+  | In(x, _) => "in " ++ x
+  | In_(x, _) => "in_ " ++ x
+  | Out(x, _) => "out " ++ x
+  | Out_(x, _) => "out_ " ++ x
+  | Open(x, _) => "open " ++ x
+  | Open_(_) => "open_"
+  | None => "None"
+  };
+};
+
+let rec treeToString (capability) = {
+  switch (getNext(capability)) {
+  | None => toString(capability)
+  | Create => toString(capability) ++ ".create"
+  | x => toString(capability) ++ "." ++ treeToString(x)
   };
 };

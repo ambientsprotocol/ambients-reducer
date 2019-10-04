@@ -5,51 +5,82 @@ let inheritChildren (b, a) = {
 };
 
 let inheritCapabilities (b, a) = {
-  /* List.concat([getCapabilities(a), getCapabilities(b)])  */
-  /* TODO: need to apply them in this order until parallal caps are supported */
-  List.concat([getCapabilities(b), getCapabilities(a)])
+  List.append(getCapabilities(a), getCapabilities(b))
   |> updateCapabilities(a);
 };
 
 let inheritSpawns (b, a) = {
-  List.concat([getSpawns(b), getSpawns(a)])
+  List.concat([getSpawns(a), getSpawns(b)])
   |> updateSpawns(a);
 };
 
-let consumeCapability (ambient) = {
-  updateCapabilities(ambient, List.tl(getCapabilities(ambient)));
+let consumeCapability (capability, ambient) = {
+  let p = List.partition(Capability.isEqual(capability), getCapabilities(ambient));
+  let firstRemoved = switch p {
+  | (matches, rest) => List.concat([List.tl(matches), rest])
+  };
+  switch (Capability.getNext(capability)) {
+  | None => updateCapabilities(ambient, firstRemoved);
+  | next => updateCapabilities(ambient, [next, ...firstRemoved]);
+  };
 };
 
-let consumeCapabilities (a, b) = {
-  (consumeCapability(a), consumeCapability(b));
+let consumeCapabilities (capability1, capability2, a, b) = {
+  (consumeCapability(capability1, a), consumeCapability(capability2, b));
 };
 
-let enter (a, b, parent): ambient = {
+let consumeSpawn (a) = {
+  switch (List.tl(getSpawns(a))) {
+  | exception Failure(_) => updateSpawns(a, [])
+  | x => updateSpawns(a, x)
+  };
+};
+
+let create (a, parent, capability): ambient = {
+  let c = findChild(getId(a), parent)
+  let source = consumeCapability(capability, c)
+  let target = getNextSpawn(source)
+  let createInAmbient (a, b) = consumeSpawn(a)
+    |> inheritChildren(b)
+    |> inheritSpawns(b)
+    |> inheritCapabilities(b);
+  let createInRoot (a, b) = consumeSpawn(a) |> addChild(b)
+  switch (getName(target)) {
+  | "" => createInAmbient(source, target) -> updateChild(parent)
+  | _ => createInRoot(source, target) -> updateChild(parent)
+  };
+};
+
+let enter (a, b, parent, capability, cocapability): ambient = {
   let c = findChild(getId(a), parent)
   let d = findChild(getId(b), parent)
-  let (source, target) = consumeCapabilities(c, d);
+  let (source, target) = consumeCapabilities(capability, cocapability, c, d);
   /* Add the entering ambient to the target ambient */
   let updated = addChild(source, target);
   /* Remove the entering ambient from its parent */
   parent |> removeChild(source) |> updateChild(updated);
 };
 
-let exit (a, b, parent): ambient = {
+let exit (a, b, parent, capability, cocapability): ambient = {
   let c = findChild(getId(a), parent)
   let d = findChild(getId(b), c)
-  let (target, source) = consumeCapabilities(c, d);
+  let (target, source) = consumeCapabilities(capability, cocapability, c, d);
   /* Add the exiting ambient to its target ambient */
   let updated = target |> removeChild(source);
   /* Remove the entering ambient from its parent */
   parent |> addChild(source) |> updateChild(updated);
 };
 
-let open_ (a, b, parent): ambient = {
+let open_ (a, b, parent, capability, cocapability): ambient = {
   /* Find the child from the parent, 
   if we can't find it assume 'a' is the root ambient */
   let c = Utils.orElse(findChild(getId(a)), parent);
-  let d = findChild(getId(b), c)
-  let (source, target) = consumeCapabilities(c, d);
+  let d = findChild(getId(b), c);
+  let (source, target) = consumeCapabilities(capability, cocapability, c, d);
+  let updateInParent (parent, ambient) = switch (isEqual(ambient, parent)) {
+  | true => ambient
+  | false => parent |> updateChild(ambient)
+  };
   /* Remove the opening ambient from its parent (source),
   inherit the children and capabilities of the opened ambient and
   update the parent of the ambient that opened the target ambient */
@@ -57,31 +88,23 @@ let open_ (a, b, parent): ambient = {
   |> removeChild(target)
   |> inheritChildren(target)
   |> inheritCapabilities(target)
-  |> inheritSpawns(target);
-
-  /* check if this was the root ambient */
-  switch (isEqual(source, parent)) {
-  | true => updated
-  | false => parent |> updateChild(updated)
-  }
-};
-
-let create (a, b, parent): ambient = {
-  let source = consumeCapability(a)
-  let target = getSpawn("", source)
-  let updated = source
-  |> inheritChildren(target)
-  |> inheritCapabilities(target);
-  updateSpawns(updated, []) -> updateChild(parent);
+  |> inheritSpawns(target)
+  |> updateInParent(parent);
+  /* "Create" is a special case in that it should be applied as soon 
+  as the previous capability has been consumed. TODO: is this wanted? */
+  switch (Capability.getNext(capability)) {
+  | Create => create(a, updated, Capability.Create);
+  | _ => updated
+  };
 };
 
 let applyTransition (parent, transition: transition(ambient)) = {
-  let {Transition.source, target, capability} = transition;
+  let {Transition.source, target, capability, cocapability} = transition;
   switch capability {
-  | Create => create(source, target, parent)
-  | In(_) => enter(source, target, parent)
-  | Out_(_) => exit(source, target, parent)
-  | Open(_) => open_(source, target, parent)
+  | Create => create(source, parent, capability)
+  | In(_) => enter(source, target, parent, capability, cocapability)
+  | Out_(_) => exit(source, target, parent, capability, cocapability)
+  | Open(_) => open_(source, target, parent, capability, cocapability)
   | _ => parent
   };
 };
@@ -114,19 +137,16 @@ let rec reduceFully (ambient) = {
 
 let rec reduceFullyDebug (index, ambient) = {
   let transitionTree = AmbientTransitionTree.createRecursive(ambient);
-  switch (canReduce(transitionTree)) {
-  | true => {
-      index == 0
-        ? print_string("initial state:\n") 
-        : print_string("step " ++ string_of_int(index) ++ ":\n");
-      print_string(treeToString(transitionTree));
-      let res = applyTransitionsRecursive(transitionTree) |> reduceFullyDebug(index + 1)
-      res
-    }
-  | false => {
-      print_string("final state:\n") 
-      print_string(treeToString(ambient));
-      ambient
-    }
+  let canReduceFurther = canReduce(transitionTree);
+
+  let prefix = switch (canReduceFurther && index > 0) {
+    | true => "step " ++ string_of_int(index) ++ ":"
+    | false => (index == 0 ? "initial state:" : "final state:");
+  };
+  print_string(prefix ++ "\n" ++ treeToString(transitionTree));
+
+  switch (canReduceFurther) {
+  | true => applyTransitionsRecursive(transitionTree) |> reduceFullyDebug(index + 1)
+  | false => ambient
   };
 };

@@ -1,4 +1,5 @@
 type ambient = Ambient.ambient;
+open Capability;
 
 /* a[b[in_ c.open c.open_] | c[in b.open_] | open b] */
 let create1 (): ambient = {
@@ -21,12 +22,13 @@ let create1 (): ambient = {
 */
 let create2 (): ambient = {
   Ambient(0, "a", [
-    Ambient(1, "b", [], [In_("c"), Open("c"), Open_], [], []),
+    /* Ambient(1, "b", [], [In_("c"), Open("c"), Open_], [], []), */
+    Ambient(1, "b", [], [In_("c", Open("c", Open_(None)))], [], []),
     Ambient(2, "c", [
       Ambient(3, "d", [], [], [], [])
-    ], [In("b"), Open_], [], [])
+    ], [In("b", Open_(None))], [], [])
   ], [
-    Open("b")
+    Open("b", None)
   ], [], []);
 };
 
@@ -36,14 +38,14 @@ a[d[]]
 */
 let create3 (): ambient = {
   Ambient(0, "a", [
-    Ambient(1, "b", [], [Open_, Open("c")], [], []),
+    Ambient(1, "b", [], [Open_(Open("c", None))], [], []),
     Ambient(2, "c", [
       Ambient(3, "d", [], [], [], [])
     ], [
-      Open_
+      Open_(None)
     ], [], [])
   ], [
-    Open("b")
+    Open("b", None)
   ], [], []);
 };
 
@@ -53,11 +55,11 @@ a[b[d[]]]
 */
 let create4 (): ambient = {
   Ambient(0, "a", [
-    Ambient(1, "b", [], [In_("c"), Open("c")], [], []),
+    Ambient(1, "b", [], [In_("c", Open("c", None))], [], []),
     Ambient(2, "c", [
       Ambient(3, "d", [], [], [], [])
     ], [
-      In("b"), Open_
+      In("b", Open_(None))
     ], [], [])
   ], [], [], []);
 };
@@ -69,8 +71,8 @@ Final state: a[b[]|c[]]
 let create5 (): ambient = {
   Ambient(0, "a", [
     Ambient(1, "b", [
-      Ambient(2, "c", [], [Out("b")], [], [])
-    ], [Out_("c")], [], []),
+      Ambient(2, "c", [], [Out("b", None)], [], [])
+    ], [Out_("c", None)], [], []),
   ], [], [], []);
 };
 
@@ -82,18 +84,18 @@ let create6 (): ambient = {
   Ambient(0, "a", [
     Ambient(1, "b", [
       Ambient(2, "c", [
-        Ambient(3, "d", [], [Out("c")], [], [])
-      ], [Out("b"), Out_("d")], [], [])
-    ], [Out_("c"), Open_], [], []),
-  ], [Open("b")], [], []);
+        Ambient(3, "d", [], [Out("c", None)], [], [])
+      ], [Out("b", Out_("d", None))], [], [])
+    ], [Out_("c", Open_(None))], [], []),
+  ], [Open("b", None)], [], []);
 };
 
 let create7 (): ambient = {
   Ambient(0, "a", [
     Ambient(1, "b", [
       Ambient(2, "c", [
-        Ambient(3, "d", [], [Out("c"), Open_, Open("b")], [], [])
-      ], [Out("b"), Out_("d")], [], [])
-    ], [Out_("c"), Open_], [], []),
-  ], [Open("d")], [], []);
+        Ambient(3, "d", [], [Out("c", Open_(Open("b", None)))], [], [])
+      ], [Out("b", Out_("d", None))], [], [])
+    ], [Out_("c", Open_(None))], [], []),
+  ], [Open("d", None)], [], []);
 };

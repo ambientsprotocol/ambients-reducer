@@ -19,12 +19,12 @@ describe("Ambient", () => {
 
   test("createTestAmbient2", () => {
     let expected = Ambient(0, "a", [
-        Ambient(1, "b", [], [In_("c"), Open("c"), Open_], [], []),
+        Ambient(1, "b", [], [In_("c", Open("c", Open_(None)))], [], []),
         Ambient(2, "c", [
           Ambient(3, "d", [], [], [], [])
-        ], [In("b"), Open_], [], [])
+        ], [In("b", Open_(None))], [], [])
       ], [
-        Open("b")
+        Open("b", None)
       ], [], []);
     let amb: ambient = TestAmbients.create2();
     expect(amb) |> toEqual(expected)

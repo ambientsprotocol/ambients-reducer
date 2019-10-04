@@ -5,9 +5,19 @@
       "name": "a",
       "children": [],
       "capabilities": [
-        "in_ call",
-        "open call",
-        "create"
+        {
+          "op": "in_",
+          "target": "call",
+          "next": {
+            "op": "open",
+            "target": "call",
+            "next": {
+              "op": "create",
+              "target": "",
+              "next": null
+            }
+          }
+        }
       ],
       "create": [
         {
@@ -28,8 +38,15 @@
             }
           ],
           "capabilities": [
-            "open return",
-            "open_"
+            {
+              "op": "open",
+              "target": "return",
+              "next": {
+                "op": "open_",
+                "target": "",
+                "next": null
+              }
+            }
           ],
           "create": []
         }
@@ -37,36 +54,68 @@
     },
     {
       "name": "call",
-      "children": [
+      "children": [],
+      "capabilities": [
+        {
+          "op": "in",
+          "target": "a",
+          "next": {
+            "op": "open_",
+            "target": "",
+            "next": {
+              "op": "create",
+              "target": "",
+              "next": null
+            }
+          }
+        }
+      ],
+      "create": [
         {
           "name": "return",
           "children": [],
           "capabilities": [
-            "open_",
-            "in func"
+            {
+              "op": "open_",
+              "target": "",
+              "next": {
+                "op": "in",
+                "target": "func",
+                "next": null
+              }
+            }
           ],
           "create": []
         }
-      ],
-      "capabilities": [
-        "in a",
-        "open_"
-      ],
-      "create": []
+      ]
     },
     {
       "name": "func",
       "children": [],
       "capabilities": [
-        "in_ a",
-        "open a",
-        "open_"
+        {
+          "op": "in_",
+          "target": "a",
+          "next": {
+            "op": "open",
+            "target": "a",
+            "next": {
+              "op": "open_",
+              "target": "",
+              "next": null
+            }
+          }
+        }
       ],
       "create": []
     }
   ],
   "capabilities": [
-    "open func"
+    {
+      "op": "open",
+      "target": "func",
+      "next": null
+    }
   ],
   "create": []
 }
