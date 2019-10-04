@@ -11,6 +11,11 @@ let inheritCapabilities (b, a) = {
   |> updateCapabilities(a);
 };
 
+let inheritSpawns (b, a) = {
+  List.concat([getSpawns(b), getSpawns(a)])
+  |> updateSpawns(a);
+};
+
 let consumeCapability (ambient) = {
   updateCapabilities(ambient, List.tl(getCapabilities(ambient)));
 };
@@ -20,7 +25,9 @@ let consumeCapabilities (a, b) = {
 };
 
 let enter (a, b, parent): ambient = {
-  let (source, target) = consumeCapabilities(a, b);
+  let c = findChild(getId(a), parent)
+  let d = findChild(getId(b), parent)
+  let (source, target) = consumeCapabilities(c, d);
   /* Add the entering ambient to the target ambient */
   let updated = addChild(source, target);
   /* Remove the entering ambient from its parent */
@@ -47,9 +54,10 @@ let open_ (a, b, parent): ambient = {
   inherit the children and capabilities of the opened ambient and
   update the parent of the ambient that opened the target ambient */
   let updated = source 
-    |> removeChild(target)
-    |> inheritChildren(target)
-    |> inheritCapabilities(target);
+  |> removeChild(target)
+  |> inheritChildren(target)
+  |> inheritCapabilities(target)
+  |> inheritSpawns(target);
 
   /* check if this was the root ambient */
   switch (isEqual(source, parent)) {
@@ -58,9 +66,19 @@ let open_ (a, b, parent): ambient = {
   }
 };
 
+let create (a, b, parent): ambient = {
+  let source = consumeCapability(a)
+  let target = getSpawn("", source)
+  let updated = source
+  |> inheritChildren(target)
+  |> inheritCapabilities(target);
+  updateSpawns(updated, []) -> updateChild(parent);
+};
+
 let applyTransition (parent, transition: transition(ambient)) = {
   let {Transition.source, target, capability} = transition;
   switch capability {
+  | Create => create(source, target, parent)
   | In(_) => enter(source, target, parent)
   | Out_(_) => exit(source, target, parent)
   | Open(_) => open_(source, target, parent)

@@ -1,6 +1,7 @@
 type name = Name.t;
 
 type t =
+  | Create
   | In(name)
   | In_(name)
   | Out(name)
@@ -11,6 +12,7 @@ type t =
 
 let toString (capability: t) = {
   switch capability {
+  | Create => "create"
   | In(x) => "in " ++ x
   | In_(x) => "in_ " ++ x
   | Out(x) => "out " ++ x
@@ -23,6 +25,7 @@ let toString (capability: t) = {
 
 let fromString (s: string): t = {
   switch (Array.to_list(Js.String.split(" ", s))) {
+  | ["create"] => Create
   | ["in", x] => In(x)
   | ["in_", x] => In_(x)
   | ["out", x] => Out(x)

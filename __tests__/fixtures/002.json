@@ -3,24 +3,36 @@
   "children": [
     {
       "name": "a",
-      "children": [
-        {
-          "name": "string",
-          "children": [
-            {
-              "name": "hello",
-              "children": [],
-              "capabilities": []
-            }
-          ],
-          "capabilities": []
-        }
-      ],
+      "children": [],
       "capabilities": [
         "in_ call",
         "open call",
-        "open return",
-        "open_"
+        "create"
+      ],
+      "create": [
+        {
+          "name": "",
+          "children": [
+            {
+              "name": "string",
+              "children": [
+                {
+                  "name": "hello",
+                  "children": [],
+                  "capabilities": [],
+                  "create": []
+                }
+              ],
+              "capabilities": [],
+              "create": []
+            }
+          ],
+          "capabilities": [
+            "open return",
+            "open_"
+          ],
+          "create": []
+        }
       ]
     },
     {
@@ -32,13 +44,15 @@
           "capabilities": [
             "open_",
             "in func"
-          ]
+          ],
+          "create": []
         }
       ],
       "capabilities": [
         "in a",
         "open_"
-      ]
+      ],
+      "create": []
     },
     {
       "name": "func",
@@ -47,10 +61,12 @@
         "in_ a",
         "open a",
         "open_"
-      ]
+      ],
+      "create": []
     }
   ],
   "capabilities": [
     "open func"
-  ]
+  ],
+  "create": []
 }

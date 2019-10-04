@@ -1,0 +1,136 @@
+{
+  "name": "",
+  "children": [
+    {
+      "name": "a",
+      "children": [],
+      "capabilities": [
+        "in_ call",
+        "open call",
+        "create"
+      ],
+      "create": [
+        {
+          "name": "",
+          "children": [
+            {
+              "name": "string",
+              "children": [
+                {
+                  "name": "hello",
+                  "children": [],
+                  "capabilities": [],
+                  "create": []
+                }
+              ],
+              "capabilities": [],
+              "create": []
+            }
+          ],
+          "capabilities": [
+            "open return",
+            "open_"
+          ],
+          "create": []
+        }
+      ]
+    },
+    {
+      "name": "b",
+      "children": [],
+      "capabilities": [
+        "in_ call",
+        "open call",
+        "create"
+      ],
+      "create": [
+        {
+          "name": "",
+          "children": [
+            {
+              "name": "call",
+              "children": [
+                {
+                  "name": "return",
+                  "children": [],
+                  "capabilities": [
+                    "open_",
+                    "in b",
+                    "in func"
+                  ],
+                  "create": []
+                }
+              ],
+              "capabilities": [
+                "out b",
+                "in a",
+                "open_"
+              ],
+              "create": []
+            },
+            {
+              "name": "func",
+              "children": [],
+              "capabilities": [
+                "in_ a",
+                "open a",
+                "create"
+              ],
+              "create": [
+                {
+                  "name": "",
+                  "children": [],
+                  "capabilities": [
+                    "open_"
+                  ],
+                  "create": []
+                }
+              ]
+            }
+          ],
+          "capabilities": [
+            "out_ call",
+            "in_ a",
+            "open func",
+            "open return",
+            "open_"
+          ],
+          "create": []
+        }
+      ]
+    },
+    {
+      "name": "call",
+      "children": [
+        {
+          "name": "return",
+          "children": [],
+          "capabilities": [
+            "open_",
+            "in func"
+          ],
+          "create": []
+        }
+      ],
+      "capabilities": [
+        "in b",
+        "open_"
+      ],
+      "create": []
+    },
+    {
+      "name": "func",
+      "children": [],
+      "capabilities": [
+        "in_ b",
+        "open b",
+        "open_"
+      ],
+      "create": []
+    }
+  ],
+  "capabilities": [
+    "open func"
+  ],
+  "create": []
+}

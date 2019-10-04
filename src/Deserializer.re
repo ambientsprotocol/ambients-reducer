@@ -3,7 +3,8 @@ open Ambient;
 type node = {
   name: string,
   children: list(node),
-  capabilities: list(string)
+  capabilities: list(string),
+  create: list(node)
 };
 
 /* exception ID_Required(string);
@@ -35,7 +36,8 @@ let rec node = json => {
   Json.Decode.{
     name: json |> field("name", string),
     children: json |> field("children", list(node)),
-    capabilities: json |> field("capabilities", list(string))
+    capabilities: json |> field("capabilities", list(string)),
+    create: json |> field("create", list(node))
   };
 };
 
@@ -58,7 +60,8 @@ let fromJSON(json): ambient = {
   let rec parseAmbient = (node: node): ambient => {
     let children = List.map(parseAmbient, node.children);
     let capabilities = List.map(Capability.fromString, node.capabilities);
-    Ambient.create(Random.int(10000), node.name, children, capabilities, []);
+    let create = List.map(parseAmbient, node.create);
+    Ambient.create(Utils.generateId(), node.name, children, capabilities, [], create);
     /*
     switch node.nType {
     | "Ambient" => switch node.id {
