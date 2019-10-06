@@ -1,5 +1,5 @@
-type ambient = Ambient.ambient;
 open Capability;
+type ambient = Ambient.ambient;
 
 type cap = {
   op: string, 

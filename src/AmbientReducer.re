@@ -10,15 +10,13 @@ let inheritCapabilities (b, a) = {
 };
 
 let inheritSpawns (b, a) = {
-  List.concat([getSpawns(a), getSpawns(b)])
+  List.append(getSpawns(a), getSpawns(b))
   |> updateSpawns(a);
 };
 
 let consumeCapability (capability, ambient) = {
-  let p = List.partition(Capability.isEqual(capability), getCapabilities(ambient));
-  let firstRemoved = switch p {
-  | (matches, rest) => List.concat([List.tl(matches), rest])
-  };
+  let (matches, rest) = List.partition(Capability.isEqual(capability), getCapabilities(ambient));
+  let firstRemoved = List.concat([List.tl(matches), rest]);
   switch (Capability.getNext(capability)) {
   | None => updateCapabilities(ambient, firstRemoved);
   | next => updateCapabilities(ambient, [next, ...firstRemoved]);
@@ -30,10 +28,8 @@ let consumeCapabilities (capability1, capability2, a, b) = {
 };
 
 let consumeSpawn (a) = {
-  switch (List.tl(getSpawns(a))) {
-  | exception Failure(_) => updateSpawns(a, [])
-  | x => updateSpawns(a, x)
-  };
+  Utils.mapWithDefault(List.tl, getSpawns(a), [])
+  |> updateSpawns(a);
 };
 
 let create (a, parent, capability): ambient = {
@@ -41,9 +37,9 @@ let create (a, parent, capability): ambient = {
   let source = consumeCapability(capability, c)
   let target = getNextSpawn(source)
   let createInAmbient (a, b) = consumeSpawn(a)
-    |> inheritChildren(b)
-    |> inheritSpawns(b)
-    |> inheritCapabilities(b);
+  |> inheritChildren(b)
+  |> inheritSpawns(b)
+  |> inheritCapabilities(b);
   let createInRoot (a, b) = consumeSpawn(a) |> addChild(b)
   switch (getName(target)) {
   | "" => createInAmbient(source, target) -> updateChild(parent)
@@ -74,7 +70,7 @@ let exit (a, b, parent, capability, cocapability): ambient = {
 let open_ (a, b, parent, capability, cocapability): ambient = {
   /* Find the child from the parent, 
   if we can't find it assume 'a' is the root ambient */
-  let c = Utils.orElse(findChild(getId(a)), parent);
+  let c = Utils.mapWithDefault(findChild(getId(a)), parent, parent);
   let d = findChild(getId(b), c);
   let (source, target) = consumeCapabilities(capability, cocapability, c, d);
   let updateInParent (parent, ambient) = switch (isEqual(ambient, parent)) {
