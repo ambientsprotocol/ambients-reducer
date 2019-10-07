@@ -8,25 +8,40 @@ Output: `a[]`
 
 See [example input](https://github.com/haadcode/ambients-reducer/blob/master/__tests__/fixtures/002.json) format (JSON) which is produced by [ambc](https://github.com/aphelionz/ambc), an ambients compiler.
 
-# Install
+## Install
 
 ```
 git clone https://github.com/haadcode/ambients-reducer.git
 npm install
 ```
 
-# Build
+## Build
 ```
 npm run build
 ```
 
-# Build + Watch
+## Build + Watch
 
 ```
 npm run start
 ```
 
-# Examples
+## Usage
+
+Use as a module in a JavaScript program:
+
+```js
+const fs = require("fs")
+const deserializer = require("./src/Deserializer.bs.js")
+const vm = require("./src/AmbientReducer.bs.js")
+const jsonFile = "./__tests__/fixtures/001.json"
+const json = fs.readFileSync(jsonFile, "utf8")
+const program = deserializer.fromJSON(json)
+const result = vm.reduceFully(program)
+console.log(JSON.stringify(result, null, 2))
+```
+
+## Examples
 
 Run [Program1.re](https://github.com/haadcode/ambients-reducer/blob/master/src/examples/Program1.re):
 
