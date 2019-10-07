@@ -1,4 +1,4 @@
-# Ambient Reductions
+# Ambients Reducer
 
 *Experimental* Ambient Calculus reducer module. Give the reducer an ambient and it will reduce it to its final form.
 
@@ -9,7 +9,7 @@ Output: `a[]`
 # Install
 
 ```
-git clone https://github.com/haadcode/ambient-reductions.git
+git clone https://github.com/haadcode/ambients-reducer.git
 npm install
 ```
 
@@ -26,7 +26,7 @@ npm run start
 
 # Examples
 
-Run [Program1.re](https://github.com/haadcode/ambient-reductions/blob/master/src/examples/Program1.re):
+Run [Program1.re](https://github.com/haadcode/ambients-reducer/blob/master/src/examples/Program1.re):
 
 ```
 node src/examples/Program1.bs.js
@@ -48,7 +48,7 @@ final state:
    └─ d[]
 ```
 
-Run [Program2.re](https://github.com/haadcode/ambient-reductions/blob/master/src/examples/Program2.re):
+Run [Program2.re](https://github.com/haadcode/ambients-reducer/blob/master/src/examples/Program2.re):
 
 ```
 node src/examples/Program2.bs.js

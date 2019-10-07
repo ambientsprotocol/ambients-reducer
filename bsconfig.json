@@ -1,6 +1,6 @@
 {
-  "name": "ambient-reductions",
-  "version": "0.1.0",
+  "name": "ambients-reducer",
+  "version": "0.0.1",
   "sources": [
     {
       "dir" : "src",
