@@ -61,6 +61,8 @@ let getNextSpawn (ambient) = {
   };
 };
 
+let firstChild (ambient) = List.hd(getChildren(ambient));
+
 let isEqual (a, b) = getId(a) == getId(b)
 
 let _addAll = (ambient: ambient, list) => {
@@ -115,6 +117,10 @@ let findAllChildren (name: name, parent: ambient) = {
 
 let findChild (id: int, parent: ambient) = {
   List.find((a) => id == getId(a), getChildren(parent));
+};
+
+let findFirst (name: name, parent: ambient) = {
+  List.find((a) => name == getName(a), getChildren(parent));
 };
 
 let toString (ambient): string = {
