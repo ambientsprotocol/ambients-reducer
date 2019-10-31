@@ -1,8 +1,13 @@
-open Ambient;
-
 let jsonFile = "./__tests__/fixtures/001.json"
 
-let json = Node.Fs.readFileAsUtf8Sync(jsonFile);
-let root: ambient = Deserializer.fromJSON(json);
+let result = jsonFile 
+  |> Node.Fs.readFileAsUtf8Sync 
+  |> Deserializer.fromJSON
+  |> AmbientReducer.reduceToValue;
+  /* |> AmbientReducer.reduceToValueDebug; */
 
-AmbientReducer.reduceFullyDebug(0, root);
+switch (result) {
+| String(x) => print_string(x ++ "\n")
+| Int(x) => print_string(string_of_int(x) ++ "\n")
+| _ => print_string("Unknown value\n")
+};

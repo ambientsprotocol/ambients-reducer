@@ -30,11 +30,11 @@ let _createTransitions (ambient, parent): list(transition(ambient)) = {
     | _ => []
     };
   };
-  let reduceToValue (r, a) = Utils.optionToValue(a, x => List.append([x], r), r);
+  let toValue (r, a) = Utils.optionToValue(a, x => [x, ...r], r);
   getCapabilities(ambient)
   |> List.map(findPossibleTransitions(ambient, parent))
   |> List.fold_left(Utils.concatListReducer, [])
-  |> List.fold_left(reduceToValue, []);
+  |> List.fold_left(toValue, []);
 };
 
 let _create (parent, ambient, initial) = {

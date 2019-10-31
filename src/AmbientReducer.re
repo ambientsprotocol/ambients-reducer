@@ -5,13 +5,17 @@ let inheritChildren (b, a) = {
 };
 
 let inheritCapabilities (b, a) = {
-  List.append(getCapabilities(a), getCapabilities(b))
+  List.append(getCapabilities(a), getCapabilities(b)) 
   |> updateCapabilities(a);
 };
 
 let inheritSpawns (b, a) = {
-  List.append(getSpawns(a), getSpawns(b))
+  List.append(getSpawns(a), getSpawns(b)) 
   |> updateSpawns(a);
+};
+
+let inheritAll (b, a) = {
+  a |> inheritChildren(b) |> inheritSpawns(b) |> inheritCapabilities(b);
 };
 
 let consumeCapability (capability, ambient) = {
@@ -37,9 +41,9 @@ let create (a, parent, capability): ambient = {
   let source = consumeCapability(capability, c)
   let target = getNextSpawn(source)
   let createInAmbient (a, b) = consumeSpawn(a)
-  |> inheritChildren(b)
-  |> inheritSpawns(b)
-  |> inheritCapabilities(b);
+  |> inheritAll(b);
+  /* |> inheritSpawns(b)
+  |> inheritCapabilities(b); */
   let createInRoot (a, b) = consumeSpawn(a) |> addChild(b)
   switch (getName(target)) {
   | "" => createInAmbient(source, target) -> updateChild(parent)
@@ -82,9 +86,7 @@ let open_ (a, b, parent, capability, cocapability): ambient = {
   update the parent of the ambient that opened the target ambient */
   let updated = source 
   |> removeChild(target)
-  |> inheritChildren(target)
-  |> inheritCapabilities(target)
-  |> inheritSpawns(target)
+  |> inheritAll(target)
   |> updateInParent(parent);
   /* "Create" is a special case in that it should be applied as soon 
   as the previous capability has been consumed. TODO: is this wanted? */
@@ -145,4 +147,20 @@ let rec reduceFullyDebug (index, ambient) = {
   | true => applyTransitionsRecursive(transitionTree) |> reduceFullyDebug(index + 1)
   | false => ambient
   };
+};
+
+let _toValue (ambient): Value.t = {
+  switch (getName(ambient)) {
+  | "string" => String.parse(firstChild(ambient))
+  | "int" => Int.parse(firstChild(ambient))
+  | _ => None
+  };
+};
+
+let reduceToValue (ambient) = {
+  reduceFully(ambient) |> Ambient.firstChild |> _toValue;
+};
+
+let reduceToValueDebug (ambient) = {
+  reduceFullyDebug(0, ambient) |> Ambient.firstChild |> _toValue;
 };
