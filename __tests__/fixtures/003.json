@@ -24,10 +24,10 @@
           "name": "",
           "children": [
             {
-              "name": "string",
+              "name": "int",
               "children": [
                 {
-                  "name": "hello",
+                  "name": "5",
                   "children": [],
                   "capabilities": [],
                   "create": []

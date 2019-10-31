@@ -1,0 +1,398 @@
+{
+  "name": "",
+  "children": [
+    {
+      "name": "int_plus",
+      "children": [],
+      "capabilities": [
+        {
+          "op": "in_",
+          "target": "call",
+          "next": {
+            "op": "open",
+            "target": "call",
+            "next": {
+              "op": "create",
+              "target": "",
+              "next": null
+            }
+          }
+        }
+      ],
+      "create": [
+        {
+          "name": "",
+          "children": [
+            {
+              "name": "func",
+              "children": [
+                {
+                  "name": "left",
+                  "children": [],
+                  "capabilities": [
+                    {
+                      "op": "in_",
+                      "target": "arg",
+                      "next": {
+                        "op": "open",
+                        "target": "arg",
+                        "next": {
+                          "op": "in",
+                          "target": "int",
+                          "next": {
+                            "op": "in",
+                            "target": "plus",
+                            "next": null
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "create": []
+                },
+                {
+                  "name": "right",
+                  "children": [],
+                  "capabilities": [
+                    {
+                      "op": "in_",
+                      "target": "arg",
+                      "next": {
+                        "op": "open",
+                        "target": "arg",
+                        "next": {
+                          "op": "in",
+                          "target": "int",
+                          "next": {
+                            "op": "in",
+                            "target": "plus",
+                            "next": null
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "create": []
+                },
+                {
+                  "name": "int",
+                  "children": [
+                    {
+                      "name": "plus",
+                      "children": [],
+                      "capabilities": [
+                        {
+                          "op": "in_",
+                          "target": "left",
+                          "next": null
+                        },
+                        {
+                          "op": "in_",
+                          "target": "right",
+                          "next": null
+                        }
+                      ],
+                      "create": []
+                    }
+                  ],
+                  "capabilities": [
+                    {
+                      "op": "in_",
+                      "target": "left",
+                      "next": null
+                    },
+                    {
+                      "op": "in_",
+                      "target": "right",
+                      "next": null
+                    }
+                  ],
+                  "create": []
+                }
+              ],
+              "capabilities": [
+                {
+                  "op": "open_",
+                  "target": "",
+                  "next": null
+                }
+              ],
+              "create": []
+            }
+          ],
+          "capabilities": [
+            {
+              "op": "open",
+              "target": "return",
+              "next": {
+                "op": "open_",
+                "target": "",
+                "next": null
+              }
+            }
+          ],
+          "create": []
+        }
+      ]
+    },
+    {
+      "name": "program",
+      "children": [],
+      "capabilities": [
+        {
+          "op": "in_",
+          "target": "call",
+          "next": {
+            "op": "open",
+            "target": "call",
+            "next": {
+              "op": "create",
+              "target": "",
+              "next": null
+            }
+          }
+        }
+      ],
+      "create": [
+        {
+          "name": "",
+          "children": [
+            {
+              "name": "call",
+              "children": [],
+              "capabilities": [
+                {
+                  "op": "out",
+                  "target": "program",
+                  "next": {
+                    "op": "in",
+                    "target": "int_plus",
+                    "next": {
+                      "op": "open_",
+                      "target": "",
+                      "next": {
+                        "op": "create",
+                        "target": "",
+                        "next": null
+                      }
+                    }
+                  }
+                }
+              ],
+              "create": [
+                {
+                  "name": "return",
+                  "children": [],
+                  "capabilities": [
+                    {
+                      "op": "open_",
+                      "target": "",
+                      "next": {
+                        "op": "in",
+                        "target": "program",
+                        "next": {
+                          "op": "in",
+                          "target": "func",
+                          "next": null
+                        }
+                      }
+                    }
+                  ],
+                  "create": []
+                }
+              ]
+            },
+            {
+              "name": "func",
+              "children": [],
+              "capabilities": [
+                {
+                  "op": "in_",
+                  "target": "int_plus",
+                  "next": {
+                    "op": "open",
+                    "target": "int_plus",
+                    "next": {
+                      "op": "create",
+                      "target": "",
+                      "next": null
+                    }
+                  }
+                }
+              ],
+              "create": [
+                {
+                  "name": "",
+                  "children": [
+                    {
+                      "name": "arg",
+                      "children": [
+                        {
+                          "name": "int",
+                          "children": [
+                            {
+                              "name": "1",
+                              "children": [],
+                              "capabilities": [],
+                              "create": []
+                            }
+                          ],
+                          "capabilities": [],
+                          "create": []
+                        }
+                      ],
+                      "capabilities": [
+                        {
+                          "op": "in",
+                          "target": "left",
+                          "next": {
+                            "op": "open_",
+                            "target": "",
+                            "next": null
+                          }
+                        }
+                      ],
+                      "create": []
+                    },
+                    {
+                      "name": "arg",
+                      "children": [
+                        {
+                          "name": "int",
+                          "children": [
+                            {
+                              "name": "2",
+                              "children": [],
+                              "capabilities": [],
+                              "create": []
+                            }
+                          ],
+                          "capabilities": [],
+                          "create": []
+                        }
+                      ],
+                      "capabilities": [
+                        {
+                          "op": "in",
+                          "target": "right",
+                          "next": {
+                            "op": "open_",
+                            "target": "",
+                            "next": null
+                          }
+                        }
+                      ],
+                      "create": []
+                    }
+                  ],
+                  "capabilities": [
+                    {
+                      "op": "open",
+                      "target": "func",
+                      "next": {
+                        "op": "open_",
+                        "target": "",
+                        "next": null
+                      }
+                    }
+                  ],
+                  "create": []
+                }
+              ]
+            }
+          ],
+          "capabilities": [
+            {
+              "op": "out_",
+              "target": "call",
+              "next": {
+                "op": "in_",
+                "target": "int_plus",
+                "next": null
+              }
+            },
+            {
+              "op": "open",
+              "target": "func",
+              "next": {
+                "op": "open",
+                "target": "return",
+                "next": {
+                  "op": "open_",
+                  "target": "",
+                  "next": null
+                }
+              }
+            }
+          ],
+          "create": []
+        }
+      ]
+    },
+    {
+      "name": "call",
+      "children": [],
+      "capabilities": [
+        {
+          "op": "in",
+          "target": "program",
+          "next": {
+            "op": "open_",
+            "target": "",
+            "next": {
+              "op": "create",
+              "target": "",
+              "next": null
+            }
+          }
+        }
+      ],
+      "create": [
+        {
+          "name": "return",
+          "children": [],
+          "capabilities": [
+            {
+              "op": "open_",
+              "target": "",
+              "next": {
+                "op": "in",
+                "target": "func",
+                "next": null
+              }
+            }
+          ],
+          "create": []
+        }
+      ]
+    },
+    {
+      "name": "func",
+      "children": [],
+      "capabilities": [
+        {
+          "op": "in_",
+          "target": "program",
+          "next": {
+            "op": "open",
+            "target": "program",
+            "next": {
+              "op": "open_",
+              "target": "",
+              "next": null
+            }
+          }
+        }
+      ],
+      "create": []
+    }
+  ],
+  "capabilities": [
+    {
+      "op": "open",
+      "target": "func",
+      "next": null
+    }
+  ],
+  "create": []
+}
