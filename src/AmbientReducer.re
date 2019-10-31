@@ -5,12 +5,12 @@ let inheritChildren (b, a) = {
 };
 
 let inheritCapabilities (b, a) = {
-  List.append(getCapabilities(a), getCapabilities(b)) 
+  List.append(getCapabilities(a), getCapabilities(b))
   |> updateCapabilities(a);
 };
 
 let inheritSpawns (b, a) = {
-  List.append(getSpawns(a), getSpawns(b)) 
+  List.append(getSpawns(a), getSpawns(b))
   |> updateSpawns(a);
 };
 
@@ -40,10 +40,7 @@ let create (a, parent, capability): ambient = {
   let c = findChild(getId(a), parent)
   let source = consumeCapability(capability, c)
   let target = getNextSpawn(source)
-  let createInAmbient (a, b) = consumeSpawn(a)
-  |> inheritAll(b);
-  /* |> inheritSpawns(b)
-  |> inheritCapabilities(b); */
+  let createInAmbient (a, b) = consumeSpawn(a) |> inheritAll(b);
   let createInRoot (a, b) = consumeSpawn(a) |> addChild(b)
   switch (getName(target)) {
   | "" => createInAmbient(source, target) -> updateChild(parent)
