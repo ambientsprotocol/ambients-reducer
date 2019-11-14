@@ -14,13 +14,13 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@glennsl/bs-jest": "^0.4.9",
-    "bs-platform": "^5.0.6",
     "ipfs": "^0.39.0",
     "orbit-db": "github:orbitdb/orbit-db#feat/offline-mode"
   },
   "dependencies": {
+    "@glennsl/bs-jest": "^0.4.9",
     "@glennsl/bs-json": "^5.0.1",
-    "bs-node": "github:reasonml-community/bs-node"
+    "bs-node": "github:reasonml-community/bs-node",
+    "bs-platform": "^5.0.6"
   }
 }
