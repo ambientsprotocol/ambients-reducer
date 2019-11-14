@@ -5,6 +5,7 @@
     "build": "bsb -make-world",
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world",
+    "postinstall": "bsb -make-world",
     "test": "npm run build && jest --verbose"
   },
   "keywords": [
