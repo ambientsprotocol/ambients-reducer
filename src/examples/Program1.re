@@ -7,7 +7,7 @@ print_string("--------\n")
 print_string("initial state:\n")
 print_string(Ambient.treeToString(root));
 
-let result = AmbientReducer.reduceFully(root);
+let result = AmbientReducer.reduceFully(Js.log, root);
 
 print_string("--------\n")
 print_string("final state:\n")

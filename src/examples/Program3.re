@@ -3,8 +3,8 @@ let jsonFile = "./__tests__/fixtures/001.json"
 let result = jsonFile 
   |> Node.Fs.readFileAsUtf8Sync 
   |> Deserializer.fromJSON
-  |> AmbientReducer.reduceToValue;
-  /* |> AmbientReducer.reduceToValueDebug; */
+  |> AmbientReducer.reduceToValue(_ => ignore);
+  /* |> AmbientReducer.reduceToValueDebug(_ => ignore); */
 
 switch (result) {
 | String(x) => print_string(x ++ "\n")
