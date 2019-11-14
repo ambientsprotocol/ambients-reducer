@@ -15,7 +15,7 @@
   "license": "MIT",
   "devDependencies": {
     "ipfs": "^0.39.0",
-    "orbit-db": "github:orbitdb/orbit-db#feat/offline-mode"
+    "orbit-db": "github:orbitdb/orbit-db#develop"
   },
   "dependencies": {
     "@glennsl/bs-jest": "^0.4.9",
