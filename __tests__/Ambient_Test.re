@@ -8,7 +8,7 @@ describe("Ambient", () => {
     expect(amb) |> toEqual(Ambient(0, "a", [], [], [], []))
   });
 
-  test("createTestAmbient1", () => {
+  /* test("createTestAmbient1", () => {
     let expected = Ambient(0, "a", [
       Ambient(1, "b", [], [], [], []),
       Ambient(2, "c", [], [], [], [])
@@ -28,5 +28,5 @@ describe("Ambient", () => {
       ], [], []);
     let amb: ambient = TestAmbients.create2();
     expect(amb) |> toEqual(expected)
-  });
+  }); */
 });

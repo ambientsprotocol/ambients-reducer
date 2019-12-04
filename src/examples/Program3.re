@@ -1,4 +1,4 @@
-let jsonFile = "./__tests__/fixtures/001.json"
+let jsonFile = "./__tests__/fixtures/010.json"
 
 let result = jsonFile 
   |> Node.Fs.readFileAsUtf8Sync 

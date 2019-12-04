@@ -7,6 +7,7 @@ type transition('a) = Transition.t('a);
    - list of children (nested ambients)
    - list of (unused) capabilities
    - list of "transitions", ie. capabilities that can be reduced in the next reduction
+   - list of "spawns", ie. capabilities and ambients that are created upon entering a "()" block
 */
 type ambient =
   | Ambient(int, name, list(ambient), list(capability), list(transition(ambient)), list(ambient));

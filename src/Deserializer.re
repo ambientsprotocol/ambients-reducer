@@ -16,13 +16,17 @@ type node = {
 
 let rec toCapability (capability: cap) = {
   let create (e, next) = switch (e.op) {
-  | "in" => In(e.target, next)
+  | "write" => Write(e.args, next)
+  | "write_" => Write_(e.args, next)
+  | "read" => Read(e.args, next)
+  | "read_" => Read_(e.args, next)
+  /* | "in" => In(e.target, next)
   | "in_" => In_(e.target, next)
   | "out" => Out(e.target, next)
   | "out_" => Out_(e.target, next)
   | "open" => Open(e.target, next)
   | "open_" => Open_(next)
-  | "create" => Create
+  | "create" => Create */
   | _ => None
   };
   switch capability.next {

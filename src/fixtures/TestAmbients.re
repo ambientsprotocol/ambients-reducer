@@ -1,4 +1,4 @@
-type ambient = Ambient.ambient;
+/* type ambient = Ambient.ambient;
 open Capability;
 
 /* a[b[in_ c.open c.open_] | c[in b.open_] | open b] */
@@ -98,4 +98,4 @@ let create7 (): ambient = {
       ], [Out("b", Out_("d", None))], [], [])
     ], [Out_("c", Open_(None))], [], []),
   ], [Open("d", None)], [], []);
-};
+}; */

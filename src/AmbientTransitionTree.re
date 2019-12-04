@@ -5,27 +5,36 @@ type transition('a) = Transition.t('a);
 
 let findMatchingCocap (capability, ambient, target): option(capability) = {
   let hasMatchingCocap (e) = switch (capability, e) {
-  | (In(c, _), In_(d, _)) => c == getName(target) && d == getName(ambient)
+  | (Write(c, _), Write_(d, _)) => List.length(c) == List.length(d) /* && TODO */
+  | (Write_(c, _), Write(d, _)) => List.length(c) == List.length(d) /* && TODO */
+  | (Read(c, _), Read_(d, _)) => List.length(c) == List.length(d) /* && TODO */
+  | (Read_(c, _), Read(d, _)) => List.length(c) == List.length(d) /* && TODO */
+  /* | (In(c, _), In_(d, _)) => c == getName(target) && d == getName(ambient)
   | (Out_(c, _), Out(d, _)) => c == getName(target) && d == getName(ambient)
-  | (Open(c, _), Open_(_)) => c == getName(target)
+  | (Open(c, _), Open_(_)) => c == getName(target) */
   | _ => false
   };
   Utils.toOption(List.find(hasMatchingCocap), getCapabilities(target));
 };
 
 let _createTransitions (ambient, parent): list(transition(ambient)) = {
-  let processCapability (name, source, parent, capability) = {
+  let processCapability (params, source, parent, capability) = {
     let processChild (target) = switch(findMatchingCocap(capability, source, target)) {
       | Some(x) => Some(Transition.create(source, target, capability, x))
       | None => None
     };
-    List.map(processChild, findAllChildren(name, parent));
+    /* TODO: per-param processing */
+    List.map(processChild, findAllChildren(List.hd(params), parent));
   };
   let findPossibleTransitions (a, p, capability) = {
     switch capability {
-    | In(name, x) => processCapability(name, a, p, In(name, x))
+    | Write(params, _) => processCapability(params, a, p, capability)
+    | Write_(params, _) => processCapability(params, a, p, capability)
+    | Read(params, _) => processCapability(params, a, p, capability)
+    | Read_(params, _) => processCapability(params, a, p, capability)
+    /* | In(name, x) => processCapability(name, a, p, In(name, x))
     | Out_(name, x) => processCapability(name, a, ambient, Out_(name, x))
-    | Open(name, x) => processCapability(name, a, ambient, Open(name, x))
+    | Open(name, x) => processCapability(name, a, ambient, Open(name, x)) */
     | Create => [Some(Transition.create(a, p, Create, Create))]
     | _ => []
     };

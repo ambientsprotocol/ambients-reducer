@@ -1,6 +1,6 @@
 open Ambient;
 
-let ambient = TestAmbients.create2();
+/* let ambient = TestAmbients.create2();
 let root = Ambient(-1, "", [ambient], [], [], []);
 
 print_string("--------\n")
@@ -11,4 +11,4 @@ let result = AmbientReducer.reduceFully(Js.log, root);
 
 print_string("--------\n")
 print_string("final state:\n")
-print_string(Ambient.treeToString(result));
+print_string(Ambient.treeToString(result)); */

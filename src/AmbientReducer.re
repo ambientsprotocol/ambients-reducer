@@ -107,9 +107,9 @@ let applyTransition (parent, transition: transition(ambient), callback) = {
   let {Transition.source, target, capability, cocapability} = transition;
   switch capability {
   | Create => create(source, parent, capability, callback)
-  | In(_) => enter(source, target, parent, capability, cocapability, callback)
+  /* | In(_) => enter(source, target, parent, capability, cocapability, callback)
   | Out_(_) => exit(source, target, parent, capability, cocapability, callback)
-  | Open(_) => open_(source, target, parent, capability, cocapability, callback)
+  | Open(_) => open_(source, target, parent, capability, cocapability, callback) */
   | _ => parent
   };
 };
