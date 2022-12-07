@@ -14,7 +14,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "ipfs": "^0.39.0",
+    "ipfs": "^0.65.0",
     "orbit-db": "github:orbitdb/orbit-db#develop"
   },
   "dependencies": {
